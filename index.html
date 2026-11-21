@@ -128,6 +128,13 @@
           <span>대화방 입장하기 ➤</span>
         </button>
 
+        <!-- AI API 설정 바로가기 링크 -->
+        <div class="text-center pt-1">
+          <button type="button" id="loginOpenApiKeyBtn" class="text-xs text-indigo-600 hover:text-indigo-800 underline font-semibold cursor-pointer inline-flex items-center gap-1">
+            <span>✨</span> <span id="loginApiKeyStatusText">구글 Gemini AI API 연동 설정하기 (선택)</span>
+          </button>
+        </div>
+
       </form>
 
     </div>
@@ -155,7 +162,14 @@
       </div>
 
       <!-- 상단 도구 -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <button type="button" id="toggleJejuModeBtn" class="px-2.5 py-1.5 rounded-xl border border-orange-300 bg-orange-50 hover:bg-orange-100 text-orange-900 text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs flex items-center gap-1" title="제주어 지역 특화 모드 켜기/끄기">
+          <span>🍊</span> <span id="jejuModeLabel" class="hidden sm:inline">제주어 모드</span>
+        </button>
+        <button type="button" id="openApiKeyModalBtn" class="px-2.5 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs" title="구글 Gemini AI API 연동 설정">
+          <span>✨</span>
+          <span id="apiKeyStatusBadge" class="hidden sm:inline">AI API</span>
+        </button>
         <button type="button" id="toggleElderModeBtn" class="px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs">
           🔍 어르신 큰글씨
         </button>
@@ -182,6 +196,10 @@
 
       <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="soonja">
         <span>👵</span> 김순자 어르신 (AI)
+      </button>
+
+      <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-orange-300 bg-orange-50/80 hover:bg-orange-100 text-orange-950 shadow-sm cursor-pointer transition-all font-bold" data-target="soonok">
+        <span>🍊</span> 고순옥 삼춘 (제주어 AI)
       </button>
 
       <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="dr_bau">
@@ -215,6 +233,21 @@
         <!-- 마이크 상태 안내 배너 -->
         <div id="micStatusText" class="hidden bg-red-500 text-white text-xs font-semibold px-4 py-2 text-center animate-pulse shadow-md">
           🎤 말씀하시는 소리를 듣고 있어요! 말씀이 끝나면 입력창에 글자로 자동으로 들어갑니다.
+        </div>
+
+        <!-- 제주어 빠른 한마디 바 (지역 특화) -->
+        <div id="jejuQuickBar" class="px-3 py-1.5 bg-orange-50 border-t border-orange-200 flex items-center gap-1.5 overflow-x-auto text-xs flex-shrink-0">
+          <span class="font-extrabold text-orange-950 flex items-center gap-1 whitespace-nowrap text-[11px]">
+            <span>🍊</span> <span>제주어 톡:</span>
+          </span>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="혼저옵서예!">혼저옵서예!</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="오늘 놀러가젠?">오늘 놀러가젠?</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="밥은 먹언?">밥은 먹언?</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="폭싹 속았수다">폭싹 속았수다</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="맨도롱 또똣하네">맨도롱 또똣하네</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="지꺼지게 놀자">지꺼지게 놀자</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="호썰만 기둘립서">호썰만 기둘립서</button>
+          <button type="button" class="jeju-chip px-2.5 py-1 rounded-full bg-white hover:bg-orange-100 border border-orange-300 text-orange-950 font-semibold whitespace-nowrap cursor-pointer transition-all active:scale-95 shadow-2xs" data-text="잘도 아꼽다">잘도 아꼽다</button>
         </div>
 
         <!-- 하단 입력 영역 -->
@@ -272,6 +305,13 @@
               <span>👵</span> 어르신 옛말
             </h4>
             <div id="popularElderWords" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-orange-950 text-xs mb-2 flex items-center gap-1">
+              <span>🍊</span> 정겨운 제주어 (지역 특화)
+            </h4>
+            <div id="popularJejuWords" class="flex flex-wrap gap-1.5"></div>
           </div>
 
           <div class="bg-amber-50/80 border-2 border-dashed border-amber-400 rounded-2xl p-4 text-xs text-amber-950 space-y-2">
@@ -351,6 +391,54 @@
     </div>
   </div>
 
+
+  <!-- ==================== 4. 구글 Gemini AI API 설정 모달 ==================== -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="apiKeyModalBackdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs"></div>
+
+    <div class="relative z-10 max-w-md w-full bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">✨</span>
+          <h3 class="text-lg font-black text-slate-900">구글 Gemini AI API 연동</h3>
+        </div>
+        <button type="button" id="closeApiKeyModalBtn" class="text-slate-400 hover:text-slate-600 text-lg font-bold p-1 cursor-pointer">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-600 leading-relaxed">
+        구글의 최신 AI(Gemini)를 연결하면 <strong>어떤 낯선 신조어·사투리·문장도 진짜 AI가 깊이 있게 통역</strong>해주며, <strong>박민준/김순자/박바우 AI 친구들과 실시간 자유 대화</strong>가 가능해집니다!
+      </p>
+
+      <div class="space-y-1.5">
+        <label for="geminiApiKeyInput" class="block text-xs font-bold text-slate-700">Gemini API 키</label>
+        <input type="password" id="geminiApiKeyInput" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-mono" placeholder="AIzaSy..." autocomplete="off">
+        <p class="text-[11px] text-slate-500">
+          * 입력하신 키는 브라우저 내부(내 컴퓨터)에만 안전하게 보관되며 외부나 깃허브에 공유되지 않습니다.
+        </p>
+      </div>
+
+      <div class="bg-indigo-50 p-3 rounded-2xl border border-indigo-100 text-xs text-indigo-900 space-y-1">
+        <div class="font-bold flex items-center gap-1">
+          <span>💡</span> <span>무료 API 키 발급 방법 (1분 소요):</span>
+        </div>
+        <p class="leading-relaxed text-[11px]">
+          1. <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold text-indigo-700">Google AI Studio (무료 키 발급 링크)</a>에 접속<br>
+          2. 구글 로그인 후 <strong>[Create API key]</strong> 버튼 클릭<br>
+          3. 발급받은 키를 복사해서 위 칸에 붙여넣고 저장하세요!
+        </p>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button type="button" id="clearApiKeyBtn" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs cursor-pointer">
+          키 삭제 (기본 모드)
+        </button>
+        <button type="button" id="saveApiKeyBtn" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md cursor-pointer">
+          저장하고 AI 활성화
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== 완전 내장 스크립트 (파일 누락 방지) ==================== -->
   <script>
     // 1. 사전 데이터
@@ -367,12 +455,28 @@
         { word: "혜안", origin: "전통 한자어 (慧眼)", meaning: "사물의 본질이나 앞날을 꿰뚫어 보는 슬기로운 안목", easyExplain: "인생의 경험과 지혜가 깊어서 상황을 깊고 넓게 내다보는 통찰력을 뜻해요.", example: "어르신의 혜안 덕분에 위기를 잘 넘겼습니다.", equivalent: "깊은 통찰력" },
         { word: "시나브로", origin: "순우리말", meaning: "모르는 사이에 조금씩 조금씩", easyExplain: "눈에 띄지 않게 천천히, 하지만 꾸준하게 스며드는 아름다운 순우리말입니다.", example: "시나브로 봄이 다가와 들꽃이 피었네.", equivalent: "서서히 / 조금씩" },
         { word: "개치네네", origin: "순우리말", meaning: "재채기 후 감기가 들지 않도록 빌어주는 감탄사", easyExplain: "재채기한 사람이 감기 앓지 말고 건강하길 바라는 따뜻한 옛말이에요 (Bless you).", example: "에이취! 어이쿠 개치네네, 감기 조심하거라.", equivalent: "감기 걸리지 마 (덕담)" }
+      ],
+      jeju: [
+        { word: "혼저옵서예", origin: "제주어 인사", meaning: "어서 오세요 (따뜻한 환영의 인사)", easyExplain: "제주에 오신 분들을 정겹고 반갑게 맞이하는 제주의 대표적인 환영 인사말이에요.", example: "다정다감에 혼저옵서예! 편안하게 쉬다 갑서.", equivalent: "어서 오세요 / 환영합니다" },
+        { word: "폭싹 속았수다", origin: "제주어 덕담", meaning: "정말 대단히 수고 많으셨습니다", easyExplain: "'속다'는 고생했다는 제주 옛말로, 힘든 일을 마친 상대방의 노고를 깊이 위로하고 존경을 전하는 말이에요.", example: "오늘 하루도 일하느라 폭싹 속았수다!", equivalent: "수고 많으셨습니다 / 고생하셨습니다" },
+        { word: "놀러가젠?", origin: "제주어 구어체", meaning: "놀러 갈래? / 놀러 가자고?", easyExplain: "제주 어르신들과 청년들이 상대방에게 함께 놀러 가자고 친근하게 권유할 때 쓰는 구어체예요.", example: "날씨도 좋은데 오늘 바당으로 놀러가젠?", equivalent: "놀러 가자 / 놀러 갈까요?" },
+        { word: "밥은 먹언?", origin: "제주어 안부", meaning: "식사는 하셨나요? / 밥 먹었니?", easyExplain: "상대방의 끼니와 건강을 가장 먼저 살뜰히 챙기는 정겨운 제주의 안부 인사예요.", example: "청년아, 밥은 먹언? 굶지 말고 다녀.", equivalent: "식사하셨어요? / 밥 먹었니?" },
+        { word: "맨도롱 또똣", origin: "제주어 감성 표현", meaning: "기분 좋게 따뜻하고 알맞은 상태", easyExplain: "국물이나 차의 온도가 마시기 딱 알맞게 따뜻하거나, 마음이 훈훈할 때 쓰는 다정한 말이에요.", example: "맨도롱 또똣한 메밀차 한 잔 마시멍 이야기 나눕서.", equivalent: "따뜻하고 훈훈한" },
+        { word: "지꺼지게", origin: "제주어 감정", meaning: "기쁘고 즐겁게 / 신명나게", easyExplain: "마음이 흐뭇하고 무척 신나고 재미있을 때 쓰는 기분 좋은 제주어예요.", example: "오늘 다정다감에서 지꺼지게 이야기해봅주!", equivalent: "기쁘게 / 즐겁게" },
+        { word: "안트레 들어옵서", origin: "제주어 환영", meaning: "안으로 들어오세요", easyExplain: "집에 찾아온 손님을 안방이나 따뜻한 안쪽으로 모실 때 정답게 건네는 말이에요.", example: "문간에 서 있지 말고 얼른 안트레 들어옵서.", equivalent: "안으로 들어오세요" },
+        { word: "삼춘", origin: "제주 고유 호칭", meaning: "친척뿐 아니라 동네의 어른을 친근하게 부르는 존칭", easyExplain: "제주에서는 남녀 구분 없이 마을의 이웃 어르신들을 모두 다정하게 '삼춘'이라고 부르며 가족처럼 지내요.", example: "옆집 순옥 삼춘이 귤을 한 바구니 주셨어요.", equivalent: "이웃 어르신 / 동네 큰어른" },
+        { word: "놀멍 쉬멍", origin: "제주어 슬로라이프", meaning: "놀면서 쉬면서 천천히", easyExplain: "조급하게 서두르지 말고 여유를 가지고 편안하게 인생을 즐기자는 제주의 지혜예요.", example: "바쁘게만 살지 말고 놀멍 쉬멍 가도 괜찮아.", equivalent: "여유롭게 쉬어가며" },
+        { word: "호썰만 기둘립서", origin: "제주어 부탁", meaning: "조금만 기다려 주세요", easyExplain: "'호썰'은 '조금', '기둘립서'는 '기다려주세요'라는 뜻으로 정중하게 양해를 구할 때 써요.", example: "차 끓이고 있으니 호썰만 기둘립서.", equivalent: "잠시만 기다려 주세요" },
+        { word: "잘도 아꼽다", origin: "제주어 칭찬", meaning: "정말 사랑스럽고 귀엽다", easyExplain: "손주나 아이들이 예쁘고 사랑스러울 때 쓰다듬으며 건네는 감탄사예요.", example: "우리 손지 잘도 아꼽네!", equivalent: "정말 귀엽고 사랑스럽다" },
+        { word: "무사 경 햄수과?", origin: "제주어 의문", meaning: "왜 그렇게 하세요? / 무슨 일 때문인가요?", easyExplain: "상대방의 행동이나 상황이 궁금하거나 걱정될 때 부드럽게 묻는 제주어예요.", example: "무리하지 맙서, 무사 경 햄수과?", equivalent: "왜 그렇게 하세요?" },
+        { word: "게난 말이다", origin: "제주어 맞장구", meaning: "그러니까 말이야 / 내 말이 그 말이야", easyExplain: "상대방의 말에 크게 공감하고 맞장구칠 때 쓰는 정겨운 추임새예요.", example: "게난 말이다, 옛날엔 다 그랬주.", equivalent: "그러게 말이야 / 전적으로 동감해" }
       ]
     };
 
     const ALL_WORDS = [
       ...GENERATION_DICTIONARY.youth.map(i => ({ ...i, type: 'youth' })),
-      ...GENERATION_DICTIONARY.elder.map(i => ({ ...i, type: 'elder' }))
+      ...GENERATION_DICTIONARY.elder.map(i => ({ ...i, type: 'elder' })),
+      ...GENERATION_DICTIONARY.jeju.map(i => ({ ...i, type: 'jeju' }))
     ];
 
     function highlightWords(text) {
@@ -393,6 +497,51 @@
       match = ALL_WORDS.find(w => q.includes(w.word.toLowerCase()) || w.word.toLowerCase().includes(q));
       if (match) return match;
       return { word: word, origin: "세대 표현", meaning: `"${word}"에 대한 맞춤형 세대 해석입니다.`, easyExplain: "대화 속에서 쓰인 표현이에요. 상대방에게 직접 뜻을 물어보셔도 친절하게 알려드립니다!", example: `상대방에게: "${word}이(가) 무슨 뜻인가요?"`, equivalent: "문맥에 따른 쉬운 설명" };
+    }
+
+    // ==================== 구글 Gemini AI API 연동 ====================
+    const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6K2-As_sbIa7FmlDELNkr_CbysgIASZ5VfBJKtjGnHp6w";
+
+    async function callGeminiAPI(prompt, systemInstruction = "", jsonMode = false) {
+      const apiKey = (localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_API_KEY).trim();
+      if (!apiKey) return null;
+
+      const candidateModels = ["gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-flash-latest"];
+      const payload = {
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: jsonMode ? 0.2 : 0.7,
+          maxOutputTokens: 800
+        }
+      };
+      if (jsonMode) {
+        payload.generationConfig.responseMimeType = "application/json";
+      }
+      if (systemInstruction) {
+        payload.systemInstruction = { parts: [{ text: systemInstruction }] };
+      }
+
+      let lastError = null;
+      for (const model of candidateModels) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json; charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const errJson = await res.json().catch(() => ({}));
+            throw new Error(errJson.error?.message || `API 호출 에러 (${res.status})`);
+          }
+          const data = await res.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          if (text) return text.trim();
+        } catch (e) {
+          lastError = e;
+        }
+      }
+      throw lastError || new Error("Gemini API 호출 실패");
     }
 
     // AI 세대 맥락 통역기 함수
@@ -491,7 +640,25 @@
         // 어르신 어휘
         { reg: /혜안/gi, to: "깊은 지혜와 통찰력", word: "혜안", explain: "사물을 꿰뚫어 보는 슬기로운 안목" },
         { reg: /시나브로/gi, to: "모르는 사이에 조금씩 천천히", word: "시나브로", explain: "천천히 꾸준히 스며드는 모양" },
-        { reg: /개치네네/gi, to: "감기 걸리지 말라는 따뜻한 덕담", word: "개치네네", explain: "재채기 후 감기 앓지 말라는 옛 덕담" }
+        { reg: /개치네네/gi, to: "감기 걸리지 말라는 따뜻한 덕담", word: "개치네네", explain: "재채기 후 감기 앓지 말라는 옛 덕담" },
+
+        // 제주 방언 및 지역 어휘 (제주 특화)
+        { reg: /혼저옵서예|혼저옵서/gi, to: "어서 오세요(반갑게 환영합니다)", word: "혼저옵서예", explain: "어서 오세요라는 뜻의 제주도 대표 인사말" },
+        { reg: /폭싹\s*속았수다|속았수다/gi, to: "정말 대단히 수고 많으셨습니다", word: "폭싹 속았수다", explain: "고생 많으셨습니다라는 뜻의 따뜻한 제주 덕담" },
+        { reg: /밥은?\s*먹언\?/gi, to: "식사는 하셨나요(밥 먹었니)?", word: "밥은 먹언?", explain: "끼니를 챙겨 묻는 정겨운 제주의 안부 인사" },
+        { reg: /어떵\s*살맨\?/gi, to: "어떻게 잘 지내고 있니?", word: "어떵 살맨?", explain: "어떻게 지내느냐고 묻는 제주어 안부" },
+        { reg: /맨도롱\s*또똣|멘도롱\s*또똣/gi, to: "기분 좋게 따뜻하고 알맞은", word: "맨도롱 또똣", explain: "따뜻하고 훈훈하다는 뜻의 정겨운 제주어" },
+        { reg: /지꺼지게/gi, to: "기쁘고 즐겁게", word: "지꺼지게", explain: "기쁘고 신명난다는 뜻의 제주어" },
+        { reg: /놀멍\s*쉬멍/gi, to: "놀면서 쉬면서 여유롭게", word: "놀멍 쉬멍", explain: "천천히 쉬어가자는 뜻의 제주 슬로라이프 표현" },
+        { reg: /호썰만?\s*기둘립서/gi, to: "조금만 기다려 주세요", word: "호썰만 기둘립서", explain: "잠시만 기다려 달라는 정중한 제주어 표현" },
+        { reg: /잘도\s*아꼽다|아꼽다/gi, to: "정말 사랑스럽고 귀엽다", word: "잘도 아꼽다", explain: "매우 귀엽고 사랑스럽다는 뜻의 제주 칭찬" },
+        { reg: /잘도\s*곱딱하다|곱딱하다/gi, to: "정말 곱고 예쁘다", word: "잘도 곱딱하다", explain: "아주 곱고 아름답다는 뜻의 제주어" },
+        { reg: /무사\s*경\s*햄수과\?/gi, to: "왜 그렇게 하세요?", word: "무사 경 햄수과?", explain: "이유를 부드럽게 묻는 제주어 질문" },
+        { reg: /게난\s*말이다/gi, to: "그러니까 말이야(내 말이 그 말이야)", word: "게난 말이다", explain: "상대방의 말에 크게 공감할 때 쓰는 제주 추임새" },
+        { reg: /안트레\s*들어옵서/gi, to: "안으로 들어오세요", word: "안트레 들어옵서", explain: "안으로 들어오라는 다정한 제주 환영 인사" },
+        { reg: /삼춘들?/gi, to: "이웃 어르신(동네 큰어른)", word: "삼춘", explain: "남녀 구분 없이 동네의 어른을 친근하게 부르는 제주 호칭" },
+        { reg: /하영/gi, to: "많이/듬뿍", word: "하영", explain: "많이라는 뜻의 제주 부사" },
+        { reg: /호썰/gi, to: "조금만", word: "호썰", explain: "조금이라는 뜻의 제주 부사" }
       ];
 
       let translated = raw;
@@ -515,7 +682,17 @@
       let summary = "";
       const lowerRaw = raw.toLowerCase();
 
-      if (lowerRaw.includes("버정") || lowerRaw.includes("버스정류장")) {
+      if (lowerRaw.includes("속았수다") || lowerRaw.includes("폭싹")) {
+        summary = "오늘 하루 상대방의 노고에 감사하며 '정말 고생 많으셨습니다'라고 깊이 위로하는 따뜻한 제주의 덕담이에요.";
+      } else if (lowerRaw.includes("혼저옵서")) {
+        summary = "상대방을 두 팔 벌려 반갑게 맞이하는 제주의 따뜻한 환영 의미예요.";
+      } else if (lowerRaw.includes("또똣") || lowerRaw.includes("맨도롱") || lowerRaw.includes("멘도롱")) {
+        summary = "온기 가득하고 편안한 마음을 나누자는 훈훈한 의미예요.";
+      } else if (lowerRaw.includes("먹언") || lowerRaw.includes("살맨")) {
+        summary = "상대방의 끼니와 일상을 다정하게 챙기는 안부 질문의 의미예요.";
+      } else if (lowerRaw.includes("놀멍") || lowerRaw.includes("지꺼지게")) {
+        summary = "조급해하지 말고 서로 즐겁고 편안하게 어울리자는 따뜻한 제안이에요.";
+      } else if (lowerRaw.includes("버정") || lowerRaw.includes("버스정류장")) {
         summary = "버스정류장으로 함께 가자는 의미예요.";
       } else if (lowerRaw.includes("놀러") || lowerRaw.includes("놀자")) {
         summary = "오늘 함께 밖으로 놀러 가자는 제안의 의미예요.";
@@ -562,6 +739,11 @@
         id: "soonja", name: "김순자 어르신 (AI)", roleType: "elder", avatar: "👵",
         greeting: "아이구 어서 오너라! 오늘 하루도 고생 많았지? 밥은 든든히 챙겨 먹고 다니는 게야? 마주 앉아서 편하게 이야기 나누자꾸나.",
         reply: "그 이야기 듣고 있으니 참 마음이 포근해지는구나. 인생 살다 보면 비바람 칠 때도 있지만, 그 비가 지나가야 땅이 단단해지는 법이란다. 기운 내렴!"
+      },
+      soonok: {
+        id: "soonok", name: "고순옥 삼춘 (제주어 AI)", roleType: "elder", avatar: "🍊",
+        greeting: "아이고 혼저옵서예! 오늘 하루도 물질하고 일하느라 폭싹 속았수다. 밥은 든든히 먹언? 맨도롱 또똣한 차 한 잔 마시멍 재미나게 이야기나 나눠봅주!",
+        reply: "게난 말이다, 청년들 말 들으멍 살아가니 내 마음도 몽생이마냥 젊어지는 것 닮다! 바쁘게만 살지 말고 놀멍 쉬멍 가도 괜찮아, 기운 팍팍 내렴!"
       },
       dr_bau: {
         id: "dr_bau", name: "박바우 박사 (AI)", roleType: "mediator", avatar: "🤖",
@@ -656,6 +838,38 @@
           }
         };
 
+        // 제주어 모드 토글 (지역 특화)
+        this.jejuMode = false;
+        const jejuBtn = document.getElementById('toggleJejuModeBtn');
+        const jejuLabel = document.getElementById('jejuModeLabel');
+        const jejuBar = document.getElementById('jejuQuickBar');
+        if (jejuBtn) {
+          jejuBtn.onclick = () => {
+            this.jejuMode = !this.jejuMode;
+            if (this.jejuMode) {
+              jejuBtn.classList.add('bg-orange-200', 'border-orange-500', 'ring-2', 'ring-orange-400');
+              if (jejuLabel) jejuLabel.textContent = "제주어 ON";
+              if (jejuBar) jejuBar.classList.remove('hidden');
+              alert("🍊 혼저옵서예! 제주어 지역 특화 모드가 켜졌습니다.\n하단의 '제주어 톡' 버튼으로 정겨운 제주 방언을 손쉽게 입력해보세요!");
+            } else {
+              jejuBtn.classList.remove('bg-orange-200', 'border-orange-500', 'ring-2', 'ring-orange-400');
+              if (jejuLabel) jejuLabel.textContent = "제주어 모드";
+            }
+          };
+        }
+
+        // 제주어 빠른 칩 클릭 시 입력창 삽입
+        document.querySelectorAll('.jeju-chip').forEach(chip => {
+          chip.onclick = () => {
+            const txt = chip.getAttribute('data-text');
+            const inp = document.getElementById('chatTextInput');
+            if (inp) {
+              inp.value = txt;
+              inp.focus();
+            }
+          };
+        });
+
         // 대화 상대 탭
         document.querySelectorAll('.partner-tab').forEach(tab => {
           tab.onclick = () => {
@@ -696,6 +910,58 @@
           }).catch(() => {
             prompt("방 코드를 복사하세요:", this.currentRoom);
           });
+        };
+
+        // API 키 모달 제어
+        const updateApiKeyUI = () => {
+          const key = (localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_API_KEY).trim();
+          const badge = document.getElementById('apiKeyStatusBadge');
+          const loginText = document.getElementById('loginApiKeyStatusText');
+          if (key) {
+            if (badge) badge.textContent = "AI 연결됨 ✓";
+            if (loginText) loginText.textContent = "✨ 구글 Gemini AI 연동 완료 (키 변경 가능)";
+          } else {
+            if (badge) badge.textContent = "AI API";
+            if (loginText) loginText.textContent = "구글 Gemini AI API 연동 설정하기";
+          }
+        };
+        updateApiKeyUI();
+
+        const openApiModal = () => {
+          const inp = document.getElementById('geminiApiKeyInput');
+          if (inp) inp.value = localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_API_KEY;
+          document.getElementById('apiKeyModal').classList.remove('hidden');
+        };
+        const closeApiModal = () => document.getElementById('apiKeyModal').classList.add('hidden');
+
+        const btn1 = document.getElementById('openApiKeyModalBtn');
+        if (btn1) btn1.onclick = openApiModal;
+        const btn2 = document.getElementById('loginOpenApiKeyBtn');
+        if (btn2) btn2.onclick = openApiModal;
+        const btn3 = document.getElementById('closeApiKeyModalBtn');
+        if (btn3) btn3.onclick = closeApiModal;
+        const btn4 = document.getElementById('apiKeyModalBackdrop');
+        if (btn4) btn4.onclick = closeApiModal;
+
+        document.getElementById('saveApiKeyBtn').onclick = () => {
+          const val = (document.getElementById('geminiApiKeyInput').value || '').trim();
+          if (val) {
+            localStorage.setItem('gemini_api_key', val);
+            alert("✨ 구글 Gemini AI API 키가 안전하게 저장되었습니다!\n이제 실시간 맞춤 통역과 자유로운 AI 대화가 활성화됩니다.");
+          } else {
+            localStorage.removeItem('gemini_api_key');
+            alert("API 키가 비워졌습니다. 기본 내장 통역 모드로 동작합니다.");
+          }
+          updateApiKeyUI();
+          closeApiModal();
+        };
+
+        document.getElementById('clearApiKeyBtn').onclick = () => {
+          localStorage.removeItem('gemini_api_key');
+          document.getElementById('geminiApiKeyInput').value = '';
+          updateApiKeyUI();
+          alert("API 키가 삭제되었습니다. 기본 내장 통역 모드로 동작합니다.");
+          closeApiModal();
         };
       }
 
@@ -844,18 +1110,61 @@
 
         if (this.currentTarget !== 'room' && AI_PERSONAS[this.currentTarget]) {
           const p = AI_PERSONAS[this.currentTarget];
-          setTimeout(() => {
-            this.messages.push({
-              id: 'ai_' + Date.now(),
-              sender: p.id,
-              senderName: p.name,
-              senderRole: p.roleType,
-              text: p.reply,
-              time: this.getTime()
-            });
-            this.saveMsgs();
-            this.render();
-          }, 1000);
+          const hasKey = !!(localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_API_KEY).trim();
+
+          if (hasKey) {
+            // 진짜 구글 Gemini 실시간 AI 대화
+            const systemPrompts = {
+              minjun: "당신은 24세 청년 '박민준'입니다. 활기차고 예의 바르며 어르신을 깊이 공경합니다. 어르신 또는 청년 친구와의 대화에서 싹싹하고 따뜻하게 2~3문장으로 공감하며 답하세요. 한국어로 이모지도 자연스럽게 사용하세요.",
+              soonja: "당신은 75세 인자한 할머니 '김순자 어르신'입니다. 손주를 바라보듯 청년들에게 따뜻한 격려와 사랑, 인생의 지혜를 건넵니다. 푸근하고 정겨운 할머니 말투로 2~3문장으로 답하세요.",
+              soonok: "당신은 제주도 성산포에서 평생 바다 물질을 해오신 78세 정겨운 '고순옥 삼춘(제주 해녀 어르신)'입니다. 상대방 청년이나 어르신을 손주처럼 깊이 아끼며, 구수하고 정겨운 제주 방언(혼저옵서예, 폭싹 속았수다, 밥은 먹언?, 게난 말이다, 멘도롱 또똣, 놀멍 쉬멍 등)을 자연스럽게 섞어서 2~3문장으로 따뜻하고 유쾌하게 답변하세요. 이해하기 쉬운 다정한 제주 삼춘 말투를 쓰세요.",
+              dr_bau: "당신은 세대 간의 언어와 마음을 이어주는 '박바우 박사'입니다. 청년과 어르신의 세대 차이를 따뜻하게 이어주고 이해를 돕는 지혜롭고 자상한 멘토입니다. 2~3문장으로 명쾌하고 다정하게 답하세요."
+            };
+
+            const userPrompt = `상대방(${this.currentUser.name}, ${roleLabel}): "${text}"\n당신의 역할에 맞게 따뜻하고 자연스럽게 한국어로 대답해주세요.`;
+
+            callGeminiAPI(userPrompt, systemPrompts[this.currentTarget] || "")
+              .then(reply => {
+                this.messages.push({
+                  id: 'ai_' + Date.now(),
+                  sender: p.id,
+                  senderName: p.name + " ✨(Gemini AI)",
+                  senderRole: p.roleType,
+                  text: reply || p.reply,
+                  time: this.getTime()
+                });
+                this.saveMsgs();
+                this.render();
+              })
+              .catch(err => {
+                console.warn("Gemini 대화 에러:", err);
+                this.messages.push({
+                  id: 'ai_' + Date.now(),
+                  sender: p.id,
+                  senderName: p.name,
+                  senderRole: p.roleType,
+                  text: p.reply,
+                  time: this.getTime()
+                });
+                this.saveMsgs();
+                this.render();
+              });
+
+          } else {
+            // 기본 내장 대화
+            setTimeout(() => {
+              this.messages.push({
+                id: 'ai_' + Date.now(),
+                sender: p.id,
+                senderName: p.name,
+                senderRole: p.roleType,
+                text: p.reply,
+                time: this.getTime()
+              });
+              this.saveMsgs();
+              this.render();
+            }, 800);
+          }
         }
       }
 
@@ -929,60 +1238,107 @@
           });
 
           box.querySelectorAll('.trans-btn').forEach(b => {
-            b.onclick = () => {
+            b.onclick = async () => {
               const tb = box.querySelector('.trans-box');
               if (!tb) return;
               if (!tb.classList.contains('hidden')) { tb.classList.add('hidden'); return; }
 
-              const transRes = translateMessageContext(msg, this.currentUser.role);
-              let wordsHtml = '';
+              tb.classList.remove('hidden');
 
-              if (transRes.wordDetails && transRes.wordDetails.length > 0) {
-                wordsHtml = transRes.wordDetails.map(w => {
-                  return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs shadow-2xs"><strong>🏷️ ${w.word}</strong>: ${w.explain}</span>`;
-                }).join(' ');
-              } else if (transRes.words && transRes.words.length > 0) {
-                wordsHtml = transRes.words.map(w => {
-                  const wi = findWordInfo(w);
-                  return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs shadow-2xs"><strong>🏷️ ${w}</strong>: ${wi.meaning || wi.easyExplain}</span>`;
-                }).join(' ');
+              const renderResult = (res, isGemini = false) => {
+                let wordsHtml = '';
+                if (res.wordDetails && res.wordDetails.length > 0) {
+                  wordsHtml = res.wordDetails.map(w => `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs shadow-2xs"><strong>🏷️ ${w.word}</strong>: ${w.explain}</span>`).join(' ');
+                } else if (res.words && res.words.length > 0) {
+                  wordsHtml = res.words.map(w => {
+                    const wi = typeof w === 'object' ? w : findWordInfo(w);
+                    const wordName = typeof w === 'object' ? w.word : w;
+                    const wordExp = typeof w === 'object' ? w.explain : (wi.meaning || wi.easyExplain);
+                    return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs shadow-2xs"><strong>🏷️ ${wordName}</strong>: ${wordExp}</span>`;
+                  }).join(' ');
+                }
+
+                tb.innerHTML = `
+                  <div class="space-y-2.5">
+                    <div class="flex items-center justify-between border-b border-indigo-200 pb-2">
+                      <div class="flex items-center gap-1.5 font-black text-indigo-950 text-sm md:text-base">
+                        <span class="text-base md:text-lg">✨</span>
+                        <span>AI 문장 맥락 통역 ${isGemini ? '<span class="text-xs text-indigo-600 font-normal">(Gemini AI)</span>' : ''}</span>
+                      </div>
+                      <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isGemini ? 'bg-gradient-to-r from-indigo-500 to-amber-500 text-white shadow-xs' : 'bg-indigo-200/80 text-indigo-900 border border-indigo-300'}">${res.targetName || '세대 공감 해설'}</span>
+                    </div>
+
+                    <div class="space-y-1">
+                      <div class="text-[11px] font-bold text-indigo-800 flex items-center gap-1">
+                        <span>📢</span> <span>쉬운 우리말 해석:</span>
+                      </div>
+                      <div class="bg-white p-3.5 rounded-2xl border-2 border-indigo-300 text-slate-900 text-base md:text-lg font-bold leading-relaxed shadow-xs">
+                        "${res.translated}"
+                      </div>
+                    </div>
+
+                    <div class="bg-indigo-100/80 p-3 rounded-2xl text-xs md:text-sm text-indigo-950 space-y-1 border border-indigo-200/70">
+                      <div class="font-extrabold flex items-center gap-1 text-indigo-900">
+                        <span>💡</span>
+                        <span>이 말의 속뜻과 의미:</span>
+                      </div>
+                      <p class="leading-relaxed font-semibold text-indigo-950 text-sm md:text-base">${res.summary}</p>
+                    </div>
+
+                    ${wordsHtml ? `
+                    <div class="pt-2 border-t border-indigo-200/60 flex flex-wrap gap-1.5 items-center">
+                      <span class="font-bold text-slate-500 mr-1 text-xs">🔍 단어/말투 풀이:</span>
+                      ${wordsHtml}
+                    </div>` : ''}
+                  </div>
+                `;
+              };
+
+              const apiKey = (localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_API_KEY).trim();
+
+              if (apiKey) {
+                // 구글 Gemini AI 실시간 통역 호출
+                tb.innerHTML = `
+                  <div class="py-4 px-3 text-center text-xs text-indigo-700 font-bold animate-pulse flex items-center justify-center gap-2">
+                    <span class="text-base">✨</span>
+                    <span>구글 Gemini AI가 문장의 숨은 맥락을 실시간 통역하고 있습니다...</span>
+                  </div>
+                `;
+
+                try {
+                  const targetLabel = this.currentUser.role === 'youth' ? '청년 세대' : '어르신 세대';
+                  const prompt = `당신은 청년과 노인의 세대 소통을 돕는 '다정다감 AI 세대 맥락 통역사'입니다.
+특히 제주도 지역 방언(제주어, 삼춘들의 구어체, ~젠? ~언? ~수과? 등)과 청년 인터넷 신조어를 모두 완벽히 꿰뚫고 있습니다.
+다음 문장을 상대방 세대와 지역 문화가 오해 없이 편안하고 다정하게 받아들일 수 있도록 쉬운 우리말 문장과 속뜻을 통역해주세요.
+문장: "${msg.text}"
+발신자: ${msg.senderName}
+수신자: ${targetLabel}
+
+반드시 마크다운 백틱 없이 순수 JSON만 출력하세요:
+{
+  "translated": "상대방 세대가 이해하기 쉬운 자연스러운 우리말 완성형 문장",
+  "summary": "이 말에 담긴 속뜻, 뉘앙스, 진짜 의도에 대한 따뜻한 해설 (1~2문장)",
+  "words": [
+    {"word": "신조어/은어/제주어/옛말", "explain": "간단한 뜻풀이"}
+  ]
+}`;
+
+                  const reply = await callGeminiAPI(prompt, "", true);
+                  let clean = (reply || '').replace(/```json/gi, '').replace(/```/g, '').trim();
+                  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+                  if (jsonMatch) clean = jsonMatch[0];
+                  const parsed = JSON.parse(clean);
+                  parsed.targetName = targetLabel + " 맞춤 통역";
+                  renderResult(parsed, true);
+                  return;
+                } catch (err) {
+                  console.warn("Gemini 통역 에러 (로컬 엔진으로 대체):", err);
+                }
               }
 
-              tb.innerHTML = `
-                <div class="space-y-2.5">
-                  <div class="flex items-center justify-between border-b border-indigo-200 pb-2">
-                    <div class="flex items-center gap-1.5 font-black text-indigo-950 text-sm md:text-base">
-                      <span class="text-base md:text-lg">✨</span>
-                      <span>AI 문장 맥락 통역</span>
-                    </div>
-                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-200/80 text-indigo-900 border border-indigo-300">${transRes.targetName}</span>
-                  </div>
-
-                  <div class="space-y-1">
-                    <div class="text-[11px] font-bold text-indigo-800 flex items-center gap-1">
-                      <span>📢</span> <span>쉬운 우리말 해석:</span>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-2xl border-2 border-indigo-300 text-slate-900 text-base md:text-lg font-bold leading-relaxed shadow-xs">
-                      "${transRes.translated}"
-                    </div>
-                  </div>
-
-                  <div class="bg-indigo-100/80 p-3 rounded-2xl text-xs md:text-sm text-indigo-950 space-y-1 border border-indigo-200/70">
-                    <div class="font-extrabold flex items-center gap-1 text-indigo-900">
-                      <span>💡</span>
-                      <span>이 말의 속뜻과 의미:</span>
-                    </div>
-                    <p class="leading-relaxed font-semibold text-indigo-950 text-sm md:text-base">${transRes.summary}</p>
-                  </div>
-
-                  ${wordsHtml ? `
-                  <div class="pt-2 border-t border-indigo-200/60 flex flex-wrap gap-1.5 items-center">
-                    <span class="font-bold text-slate-500 mr-1 text-xs">🔍 단어/말투 풀이:</span>
-                    ${wordsHtml}
-                  </div>` : ''}
-                </div>
-              `;
-              tb.classList.remove('hidden');
+              // 기본 로컬 통역 엔진
+              const localRes = translateMessageContext(msg, this.currentUser.role);
+              renderResult(localRes, false);
             };
           });
 
@@ -1029,6 +1385,17 @@
             b.textContent = '#' + w.word;
             b.onclick = () => this.openModal(w.word);
             e.appendChild(b);
+          });
+        }
+        const j = document.getElementById('popularJejuWords');
+        if (j && GENERATION_DICTIONARY.jeju) {
+          j.innerHTML = '';
+          GENERATION_DICTIONARY.jeju.forEach(w => {
+            const b = document.createElement('button');
+            b.className = 'text-xs px-2.5 py-1 rounded-full bg-orange-50 text-orange-950 hover:bg-orange-100 border border-orange-200 cursor-pointer font-medium';
+            b.textContent = '#' + w.word;
+            b.onclick = () => this.openModal(w.word);
+            j.appendChild(b);
           });
         }
       }
