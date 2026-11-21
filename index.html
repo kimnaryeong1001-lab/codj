@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>다정다감(多情多感) - 청년과 노인의 세대 공감 대화</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- ==================== 1. 로그인 & 코드 입력 화면 ==================== -->
+  <div id="loginScreen" class="flex-1 flex items-center justify-center p-4">
+    <div class="max-w-xl w-full bg-white rounded-3xl shadow-xl border border-slate-200 p-6 md:p-8">
+      
+      <!-- 상단 로고 -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 text-white text-3xl shadow-lg mb-2">
+          🌱
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">
+          다정다감 <span class="text-indigo-600 font-normal text-xl">(多情多感)</span>
+        </h1>
+        <p class="text-slate-600 text-sm mt-1">
+          코드를 입력하여 맞는 사람끼리 1:1 대화하고, AI 친구와도 이야기해보세요!
+        </p>
+      </div>
+
+      <!-- 세대 선택 및 코드 입력 폼 -->
+      <form id="loginForm" class="space-y-5">
+        <input type="hidden" id="loginRoleInput" value="youth">
+
+        <!-- 1. 세대 선택 (청년 vs 어르신) -->
+        <div>
+          <label class="block text-slate-800 font-bold text-sm md:text-base mb-2 text-center">
+            참여하실 세대를 선택해주세요
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" id="selectYouthBtn" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-indigo-600 bg-indigo-50 ring-2 ring-indigo-500 transition-all text-center cursor-pointer hover:shadow-sm">
+              <span class="text-4xl mb-1">🧑</span>
+              <span class="text-lg font-bold text-indigo-900">청년 세대</span>
+              <span class="text-xs text-indigo-600 mt-0.5">20~30대</span>
+            </button>
+
+            <button type="button" id="selectElderBtn" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white transition-all text-center cursor-pointer hover:shadow-sm">
+              <span class="text-4xl mb-1">👵</span>
+              <span class="text-lg font-bold text-amber-900">어르신 세대</span>
+              <span class="text-xs text-amber-700 mt-0.5">큰 글씨 모드</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. 대화방 코드 입력칸 (코드가 맞는 사람끼리 매칭!) -->
+        <div class="bg-amber-50/80 border-2 border-amber-300 rounded-2xl p-4 space-y-2">
+          <label for="inputRoomCode" class="block text-amber-950 font-black text-base flex items-center gap-1.5">
+            <span>🏷️</span> 대화방 코드 입력 (필수)
+          </label>
+          <p class="text-xs text-amber-900 leading-relaxed font-medium">
+            <strong>코드가 일치하는 사람끼리만 대화가 연결됩니다.</strong><br>
+            상대방과 맞춘 코드를 입력하시거나 새 코드를 만들어 알려주세요!
+          </p>
+
+          <div class="flex gap-2 pt-1">
+            <input type="text" id="inputRoomCode" class="flex-1 px-4 py-3 text-center tracking-widest text-2xl font-black uppercase rounded-xl border-2 border-amber-400 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner" placeholder="예: 1234" maxlength="12" value="1234" required>
+            <button type="button" id="generateRandomCodeBtn" class="px-3.5 py-3 rounded-xl bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-xs whitespace-nowrap transition-colors cursor-pointer" title="새로운 임의의 4자리 방 번호를 만듭니다">
+              🎲 새 코드 생성
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. 별명(이름) 입력 -->
+        <div>
+          <label for="loginNickname" class="block text-slate-700 font-semibold mb-1 text-xs">
+            대화에서 쓸 별명 (이름)
+          </label>
+          <input type="text" id="loginNickname" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base font-medium shadow-sm" placeholder="예: 마음 따뜻한 청년" value="열정 청년" required>
+        </div>
+
+        <!-- 입장하기 버튼 -->
+        <button type="submit" class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-amber-600 hover:from-indigo-700 hover:to-amber-700 text-white font-extrabold text-lg shadow-lg transition-transform active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+          <span>대화방 입장하기 ➤</span>
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+
+  <!-- ==================== 2. 메인 대화 화면 ==================== -->
+  <div id="chatScreen" class="hidden flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+    
+    <!-- 상단 헤더 (현재 연결된 방 코드 표시) -->
+    <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between flex-shrink-0 shadow-sm">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🌱</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="font-extrabold text-slate-900 text-base md:text-lg leading-tight">다정다감</h2>
+            <!-- 현재 연결된 방 코드 표시 뱃지 -->
+            <div id="headerRoomBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-100 border border-amber-300 text-amber-950 text-xs font-black cursor-pointer hover:bg-amber-200 transition-colors shadow-xs" title="클릭하면 방 코드가 복사됩니다">
+              <span>🏷️ 코드:</span>
+              <span id="displayHeaderRoomCode" class="text-sm font-black tracking-widest text-amber-900">1234</span>
+              <span class="text-[10px] text-amber-800 underline font-normal">복사</span>
+            </div>
+          </div>
+          <div id="currentUserBadge" class="flex items-center gap-1.5 text-xs text-slate-600 mt-0.5"></div>
+        </div>
+      </div>
+
+      <!-- 상단 도구 (큰글씨 모드 / 방 코드 변경 / 퇴장) -->
+      <div class="flex items-center gap-2">
+        <button type="button" id="toggleElderModeBtn" class="px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs">
+          🔍 어르신 큰글씨
+        </button>
+        <button type="button" id="changeRoomBtn" class="text-xs text-slate-600 hover:text-indigo-600 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors" title="다른 코드로 방 변경">
+          🔄 코드 변경
+        </button>
+        <button type="button" id="logoutBtn" class="text-xs text-slate-500 hover:text-red-600 p-2 rounded-lg hover:bg-slate-100 transition-colors" title="나가기">
+          🚪 퇴장
+        </button>
+      </div>
+    </header>
+
+    <!-- 대화 파트너 선택 탭 바 (내 코드 방 / 박민준 청년 AI / 김순자 어르신 AI / 박바우 박사 AI) -->
+    <div class="bg-slate-100/90 border-b border-slate-200 px-3 py-2 flex items-center gap-2 overflow-x-auto flex-shrink-0">
+      <span class="text-xs font-bold text-slate-500 whitespace-nowrap pl-1">대화 상대:</span>
+      
+      <!-- 1. 코드 1:1 대화방 -->
+      <button type="button" class="partner-tab active px-3.5 py-1.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-indigo-600 text-indigo-600 bg-indigo-50/70 shadow-sm cursor-pointer transition-all" data-target="room">
+        <span>💬</span> <span id="partnerTabRoomTitle">1:1 연결방 [코드: 1234]</span>
+      </button>
+
+      <!-- 2. 박민준 청년 (AI) - 사진 속 페르소나 -->
+      <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="minjun">
+        <span>🧑‍💻</span> 박민준 청년 (AI)
+      </button>
+
+      <!-- 3. 김순자 어르신 (AI) -->
+      <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="soonja">
+        <span>👵</span> 김순자 어르신 (AI)
+      </button>
+
+      <!-- 4. 박바우 박사 (AI) -->
+      <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="dr_bau">
+        <span>🤖</span> 박바우 박사 (AI)
+      </button>
+    </div>
+
+    <!-- 대화 영역 -->
+    <div class="flex-1 flex overflow-hidden">
+      
+      <!-- 메인 채팅 패널 -->
+      <main class="flex-1 flex flex-col bg-slate-50/60 overflow-hidden">
+        
+        <!-- 대화 안내 바 -->
+        <div class="px-4 py-2 bg-white/80 border-b border-slate-200 flex items-center justify-between text-xs sm:text-sm flex-shrink-0">
+          <div class="flex items-center gap-2">
+            <span id="chatPartnerAvatar" class="text-xl">🏷️</span>
+            <div>
+              <span id="chatPartnerName" class="font-bold text-slate-800">1:1 연결 대화방</span>
+              <span id="chatPartnerDesc" class="text-slate-500 text-xs hidden sm:inline ml-1">• 같은 코드를 입력한 상대방끼리만 실시간으로 연결됩니다.</span>
+            </div>
+          </div>
+          <button type="button" id="clearChatBtn" class="text-xs text-slate-400 hover:text-slate-700 underline cursor-pointer">
+            대화 지우기
+          </button>
+        </div>
+
+        <!-- 메시지 리스트 스크롤 영역 (사진과 같은 카드형 말풍선 렌더링) -->
+        <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+          <!-- JS에서 동적 주입 -->
+        </div>
+
+        <!-- 마이크 상태 안내 배너 -->
+        <div id="micStatusText" class="hidden bg-red-500 text-white text-xs font-semibold px-4 py-2 text-center animate-pulse shadow-md">
+          🎤 말씀하시는 소리를 듣고 있어요! 말씀이 끝나면 입력창에 글자로 자동으로 들어갑니다.
+        </div>
+
+        <!-- 하단 입력 영역 (마이크 음성 쓰기 + 텍스트 + 전송) -->
+        <div class="p-3 md:p-4 bg-white border-t border-slate-200 flex-shrink-0">
+          <form id="chatInputForm" class="flex items-center gap-2">
+            
+            <!-- 음성지원: 말로 쓰기 버튼 (STT) -->
+            <button type="button" id="micRecordBtn" class="px-4 py-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-200 flex items-center gap-1.5 font-bold text-sm md:text-base flex-shrink-0 transition-all cursor-pointer shadow-sm select-none" title="마이크를 누르고 말씀하시면 자동으로 글자가 입력됩니다">
+              <span class="text-xl">🎤</span>
+              <span id="micButtonLabel" class="hidden sm:inline">말로 쓰기</span>
+            </button>
+
+            <!-- 텍스트 입력란 -->
+            <div class="flex-1 relative">
+              <input type="text" id="chatTextInput" class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-lg shadow-inner bg-slate-50 focus:bg-white transition-colors" placeholder="이야기를 입력하세요... (왼쪽 마이크를 누르면 음성으로 쓸 수 있어요!)" autocomplete="off">
+            </div>
+
+            <!-- 전송 버튼 -->
+            <button type="submit" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base md:text-lg shadow-md transition-all active:scale-95 flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
+              <span>보내기</span>
+              <span class="text-sm">➤</span>
+            </button>
+
+          </form>
+        </div>
+
+      </main>
+
+      <!-- 우측: 세대 언어 나눔 사전 사이드바 -->
+      <aside class="hidden lg:flex w-80 bg-white border-l border-slate-200 flex-col overflow-hidden">
+        <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📖</span>
+            <h3 class="font-bold text-slate-800 text-base">세대 공감 사전</h3>
+          </div>
+          <span class="text-[11px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-300">단어 누르면 풀이</span>
+        </div>
+
+        <!-- 단어 검색창 -->
+        <div class="p-3 border-b border-slate-200">
+          <div class="flex items-center gap-1.5">
+            <input type="text" id="dictSearchInput" class="flex-1 px-3 py-1.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="모르는 단어 검색...">
+            <button type="button" id="dictSearchBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl cursor-pointer">
+              검색
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
+          
+          <div>
+            <h4 class="font-bold text-indigo-900 text-xs mb-2 flex items-center gap-1">
+              <span>🧑</span> 청년 신조어
+            </h4>
+            <div id="popularYouthWords" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-amber-900 text-xs mb-2 flex items-center gap-1">
+              <span>👵</span> 어르신 옛말
+            </h4>
+            <div id="popularElderWords" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- 사진 속 힌트 가이드 -->
+          <div class="bg-amber-50/80 border-2 border-dashed border-amber-400 rounded-2xl p-4 text-xs text-amber-950 space-y-2">
+            <p class="font-black text-sm flex items-center gap-1 text-amber-900">
+              <span>💡</span> 단어 누르면 뜻이 나와요!
+            </p>
+            <p class="leading-relaxed">
+              채팅창에서 노란색 점선 박스로 표시된 <strong>중꺾마 🔍</strong>, <strong>럭키비키 🔍</strong> 같은 단어를 누르시면 뜻과 유래, 쉬운 해설 카드가 바로 열립니다.
+            </p>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==================== 3. 단어 상세 풀이 팝업 모달 ==================== -->
+  <div id="wordDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="wordModalBackdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"></div>
+
+    <div class="modal-content-box relative z-10 max-w-lg w-full bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+      
+      <!-- 헤더 -->
+      <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-white p-5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📖</span>
+          <div>
+            <h3 id="modalWordTitle" class="text-2xl font-black tracking-tight leading-none">중꺾마</h3>
+            <span id="modalWordOrigin" class="text-xs opacity-90 font-medium">청년 신조어</span>
+          </div>
+        </div>
+        <button type="button" id="closeWordModalBtn" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-lg font-bold transition-colors cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <!-- 본문 -->
+      <div class="p-6 space-y-4 text-slate-800">
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">단어의 뜻</span>
+          <p id="modalWordMeaning" class="text-lg font-bold text-slate-900">
+            '중요한 것은 꺾이지 않는 마음'의 줄임말
+          </p>
+        </div>
+
+        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4">
+          <span class="text-xs font-bold text-amber-800 block mb-1">🌱 쉬운 해설</span>
+          <p id="modalWordEasyExplain" class="text-base leading-relaxed text-slate-800">
+            어려운 일이 닥쳐도 포기하지 않고 꿋꿋하게 이겨내려는 굳센 마음을 뜻해요.
+          </p>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+          <span class="text-xs font-bold text-slate-600 block mb-1">💬 대화 속 예문</span>
+          <p id="modalWordExample" class="text-sm italic text-slate-700">
+            "요즘은 어려운 일이 있어도 포기하지 말자는 뜻의 '중꺾마'라는 말이 유행이에요!"
+          </p>
+        </div>
+
+        <div class="border-t border-slate-200 pt-3 flex items-center justify-between text-xs text-slate-600">
+          <div>
+            <span class="font-bold text-slate-700">🔄 쉽게 바꿔 말하면:</span>
+            <span id="modalWordEquivalent" class="ml-1 text-amber-800 font-bold">백절불굴 / 칠전팔기</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 푸터 -->
+      <div class="bg-slate-100 px-6 py-3.5 flex items-center justify-between border-t border-slate-200">
+        <button type="button" id="modalSpeakWordBtn" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm">
+          <span>🔊</span> 소리로 뜻 듣기
+        </button>
+        <button type="button" onclick="document.getElementById('closeWordModalBtn').click()" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-200 text-slate-700 font-bold text-sm border border-slate-300 transition-colors cursor-pointer">
+          닫기
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 스크립트 로드 순서 -->
+  <script src="js/dictionary.js"></script>
+  <script src="js/ai-personas.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
