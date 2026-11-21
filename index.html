@@ -91,7 +91,7 @@
         </div>
 
         <!-- 2. 대화방 코드 입력칸 (코드가 맞는 사람끼리 매칭!) -->
-        <div class="bg-amber-50/80 border-2 border-amber-300 rounded-2xl p-4 space-y-2">
+        <div class="bg-amber-50/90 border-2 border-amber-300 rounded-2xl p-4 sm:p-5 space-y-2.5 shadow-xs">
           <label for="inputRoomCode" class="block text-amber-950 font-black text-base flex items-center gap-1.5">
             <span>🏷️</span> 대화방 코드 입력 (필수)
           </label>
@@ -100,10 +100,11 @@
             상대방과 맞춘 코드를 입력하시거나 새 코드를 만들어 알려주세요!
           </p>
 
-          <div class="flex gap-2 pt-1">
-            <input type="text" id="inputRoomCode" class="flex-1 px-4 py-3 text-center tracking-widest text-2xl font-black uppercase rounded-xl border-2 border-amber-400 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner" placeholder="예: 1234" maxlength="12" value="1234" required>
-            <button type="button" id="generateRandomCodeBtn" class="px-3.5 py-3 rounded-xl bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-xs whitespace-nowrap transition-colors cursor-pointer" title="새로운 임의의 4자리 방 번호를 만듭니다">
-              🎲 새 코드 생성
+          <div class="flex items-center gap-2 pt-1">
+            <input type="text" id="inputRoomCode" class="flex-1 h-14 px-3 text-center tracking-widest text-2xl font-black uppercase rounded-xl border-2 border-amber-400 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner" placeholder="예: 1234" maxlength="12" value="1234" required>
+            <button type="button" id="generateRandomCodeBtn" class="h-14 px-4 rounded-xl bg-amber-200 hover:bg-amber-300 active:bg-amber-400 text-amber-950 font-bold text-sm whitespace-nowrap transition-all cursor-pointer border border-amber-300 flex items-center justify-center gap-1.5 shadow-xs" title="새로운 임의의 4자리 방 번호를 만듭니다">
+              <span>🎲</span>
+              <span>새 코드 생성</span>
             </button>
           </div>
         </div>
@@ -386,6 +387,110 @@
       match = ALL_WORDS.find(w => q.includes(w.word.toLowerCase()) || w.word.toLowerCase().includes(q));
       if (match) return match;
       return { word: word, origin: "세대 표현", meaning: `"${word}"에 대한 맞춤형 세대 해석입니다.`, easyExplain: "대화 속에서 쓰인 표현이에요. 상대방에게 직접 뜻을 물어보셔도 친절하게 알려드립니다!", example: `상대방에게: "${word}이(가) 무슨 뜻인가요?"`, equivalent: "문맥에 따른 쉬운 설명" };
+    }
+
+    // AI 세대 맥락 통역기 함수
+    function translateMessageContext(msg, myRole) {
+      const text = (msg.text || '').trim();
+      const senderRole = msg.senderRole || '';
+
+      // 1. 박민준 청년의 기본 질문에 대한 고품질 통역
+      if (text.includes('중꺾마') && text.includes('럭키비키')) {
+        return {
+          translated: "어르신, 요즘 저희 젊은이들은 어려움이 닥쳐도 꿋꿋이 이겨내자는 뜻의 '중꺾마'나, 매사를 밝고 복되게 생각하자는 '럭키비키' 같은 희망찬 말들을 쓰며 힘을 내고 있어요. 어르신들의 젊은 청춘 시절에는 친구분들과 어떤 멋진 유행어를 쓰셨는지 궁금해서 여쭙고 싶어요!",
+          summary: "어르신의 젊은 시절 추억과 이야기를 존경하는 마음으로 귀 기울여 듣고 소통하고 싶어하는 따뜻한 질문입니다.",
+          targetName: "어르신 눈높이 쉬운 해설",
+          words: ["중꺾마", "럭키비키"]
+        };
+      }
+
+      // 2. 김순자 어르신의 기본 말씀에 대한 고품질 통역
+      if (text.includes('비바람 칠 때도 있지만') || text.includes('땅이 단단해지는 법')) {
+        return {
+          translated: "청년아, 인생을 살아가다 보면 비바람처럼 힘든 고난이 찾아올 때도 있단다. 하지만 그 시기를 잘 견뎌내면 비 온 뒤 땅이 굳듯이 네 마음과 인생도 훨씬 더 단단해진단다. 기운 내렴!",
+          summary: "힘든 일상을 버티는 청년에게 깊은 위로와 격려를 건네며, 지금의 고난도 훗날 성장의 귀한 밑거름이 될 거라는 인생의 지혜입니다.",
+          targetName: "청년 눈높이 쉬운 해설",
+          words: []
+        };
+      }
+
+      if (text.includes('밥은 든든히 챙겨 먹고') || text.includes('오늘 하루도 고생 많았지')) {
+        return {
+          translated: "청년아 반갑구나! 오늘 하루 공부하고 일하느라 정말 고생 많았지? 끼니 거르지 말고 든든하게 잘 챙겨 먹었으면 좋겠구나. 마주 앉아서 편안하게 이야기 나눠보자.",
+          summary: "치열하게 살아가는 청년의 건강과 끼니를 진심으로 걱정하고 따뜻하게 품어주는 어르신의 모성애와 환영 인사입니다.",
+          targetName: "청년 눈높이 쉬운 해설",
+          words: []
+        };
+      }
+
+      // 3. 박바우 박사의 말씀 통역
+      if (text.includes('박바우 박사')) {
+        return {
+          translated: "반갑습니다! 저는 세대 간의 언어와 마음을 이어주는 '박바우 박사'입니다. 대화 중 잘 모르는 신조어나 낯선 표현이 나오더라도 당황하지 마시고 언제든 저를 찾아주세요!",
+          summary: "세대 차이로 인한 소통의 벽을 허물고 누구나 다정하고 편안하게 대화할 수 있도록 돕겠다는 안내입니다.",
+          targetName: "모든 세대를 위한 공감 해설",
+          words: []
+        };
+      }
+
+      // 4. 일반 메시지에 대한 신조어 및 문맥 통역
+      const slangMap = [
+        { from: /중꺾마/g, to: "어려워도 포기하지 않는 마음", word: "중꺾마" },
+        { from: /럭키비키/g, to: "모든 상황을 긍정적으로 보는 마음", word: "럭키비키" },
+        { from: /알잘딱깔센/g, to: "알아서 눈치 빠르고 야무지게", word: "알잘딱깔센" },
+        { from: /갓생/g, to: "부지런하고 모범적인 삶", word: "갓생" },
+        { from: /도파민/g, to: "가슴 두근거리는 큰 즐거움", word: "도파민" },
+        { from: /폼\s*미쳤다/g, to: "솜씨와 실력이 아주 대단하다", word: "폼 미쳤다" },
+        { from: /존버/g, to: "끝까지 꿋꿋하게 버티기", word: "존버" },
+        { from: /소확행/g, to: "작지만 확실한 행복", word: "소확행" },
+        { from: /TMI/gi, to: "너무 사소하고 자세한 이야기", word: "TMI" },
+        { from: /킹받네/g, to: "조금 얄밉고 답답하네요", word: "킹받네" },
+        { from: /꿀잼/g, to: "아주 재미있음", word: "꿀잼" },
+        { from: /노잼/g, to: "재미가 없음", word: "노잼" },
+        { from: /멘붕/g, to: "마음이 무너져 크게 당황함", word: "멘붕" },
+        { from: /레알|찐으로|찐/g, to: "진짜로 / 진심으로", word: "레알" },
+        { from: /인정/g, to: "정말 그렇습니다", word: "인정" },
+        { from: /국룰/g, to: "누구나 다 아는 기본 상식", word: "국룰" },
+        { from: /심쿵/g, to: "가슴이 설렐 만큼 감동적임", word: "심쿵" },
+        { from: /혜안/g, to: "깊은 지혜와 통찰력", word: "혜안" },
+        { from: /시나브로/g, to: "모르는 사이에 조금씩 천천히", word: "시나브로" },
+        { from: /개치네네/g, to: "감기 걸리지 말라는 따뜻한 덕담", word: "개치네네" }
+      ];
+
+      let translated = text;
+      let detectedWords = [];
+
+      slangMap.forEach(item => {
+        if (item.from.test(text)) {
+          if (!detectedWords.includes(item.word)) detectedWords.push(item.word);
+          translated = translated.replace(item.from, `[${item.to}]`);
+        }
+      });
+
+      // 맥락 의도 분석
+      let summary = "";
+      if (text.includes("?") || text.includes("나요") || text.includes("가요") || text.includes("있나요") || text.includes("어떤가요")) {
+        summary = "상대방의 생각과 경험을 존중하며 따뜻하게 의견을 묻는 질문입니다.";
+      } else if (text.includes("고마") || text.includes("감사")) {
+        summary = "상대방의 배려와 따뜻한 마음에 진심 어린 고마움을 전하는 표현입니다.";
+      } else if (text.includes("힘내") || text.includes("응원") || text.includes("파이팅") || text.includes("화이팅")) {
+        summary = "지친 마음에 힘과 용기를 북돋아 주려는 따뜻한 응원의 메시지입니다.";
+      } else if (text.includes("대단") || text.includes("멋지") || text.includes("최고") || text.includes("좋아") || text.includes("배우")) {
+        summary = "상대방의 삶과 지혜에 깊은 존경과 칭찬을 보내는 화답입니다.";
+      } else {
+        summary = "서로의 세대 경험과 마음을 진솔하게 나누며 공감대를 형성하려는 이야기입니다.";
+      }
+
+      const targetName = (senderRole === 'youth' || senderRole === 'minjun')
+        ? "어르신 눈높이 쉬운 해설"
+        : "청년 눈높이 쉬운 해설";
+
+      return {
+        translated: translated !== text ? translated : text,
+        summary: summary,
+        targetName: targetName,
+        words: detectedWords
+      };
     }
 
     // 2. AI 페르소나
@@ -770,7 +875,45 @@
               const tb = box.querySelector('.trans-box');
               if (!tb) return;
               if (!tb.classList.contains('hidden')) { tb.classList.add('hidden'); return; }
-              tb.innerHTML = `<strong>✨ AI 세대 맞춤 통역:</strong><br>"${msg.text}"<br><span class="text-xs text-indigo-600 block mt-1">💡 상대방의 마음에 닿을 수 있도록 따뜻한 세대 언어로 쉽게 풀어낸 뜻입니다.</span>`;
+
+              const transRes = translateMessageContext(msg, this.currentUser.role);
+              let wordsHtml = '';
+              if (transRes.words && transRes.words.length > 0) {
+                wordsHtml = transRes.words.map(w => {
+                  const wi = findWordInfo(w);
+                  return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs shadow-2xs"><strong>🏷️ ${w}</strong>: ${wi.meaning || wi.easyExplain}</span>`;
+                }).join(' ');
+              }
+
+              tb.innerHTML = `
+                <div class="space-y-2.5">
+                  <div class="flex items-center justify-between border-b border-indigo-200 pb-2">
+                    <div class="flex items-center gap-1.5 font-black text-indigo-950 text-sm md:text-base">
+                      <span class="text-base md:text-lg">✨</span>
+                      <span>AI 세대 맥락 통역</span>
+                    </div>
+                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-200/80 text-indigo-900 border border-indigo-300">${transRes.targetName}</span>
+                  </div>
+
+                  <div class="bg-white p-3.5 rounded-2xl border border-indigo-200 text-slate-800 text-base md:text-lg font-medium leading-relaxed shadow-xs">
+                    "${transRes.translated}"
+                  </div>
+
+                  <div class="bg-indigo-100/70 p-3 rounded-2xl text-xs md:text-sm text-indigo-950 space-y-1 border border-indigo-200/60">
+                    <div class="font-extrabold flex items-center gap-1 text-indigo-900 text-xs md:text-sm">
+                      <span>💡</span>
+                      <span>문장의 핵심 속뜻과 맥락:</span>
+                    </div>
+                    <p class="leading-relaxed font-normal text-slate-700">${transRes.summary}</p>
+                  </div>
+
+                  ${wordsHtml ? `
+                  <div class="pt-1.5 border-t border-indigo-200/60 flex flex-wrap gap-1.5 items-center">
+                    <span class="font-bold text-slate-500 mr-1 text-xs">포함된 세대 표현:</span>
+                    ${wordsHtml}
+                  </div>` : ''}
+                </div>
+              `;
               tb.classList.remove('hidden');
             };
           });
