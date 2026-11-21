@@ -6,8 +6,46 @@
   <title>다정다감(多情多感) - 청년과 노인의 세대 공감 대화</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css">
+  <!-- Custom Styles -->
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.elder-mode-active {
+      font-size: 1.15rem;
+      line-height: 1.75;
+    }
+    body.elder-mode-active .chat-bubble {
+      font-size: 1.25rem !important;
+      line-height: 1.8 !important;
+      padding: 1.1rem 1.4rem !important;
+    }
+    .chat-bubble {
+      position: relative;
+      word-break: break-word;
+      transition: all 0.2s ease-in-out;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.15); box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .mic-active {
+      animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    .dict-word-btn:hover {
+      filter: brightness(0.92);
+    }
+    .modal-enter {
+      animation: modalFadeIn 0.2s ease-out forwards;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
 
@@ -29,7 +67,7 @@
       </div>
 
       <!-- 세대 선택 및 코드 입력 폼 -->
-      <form id="loginForm" class="space-y-5">
+      <form id="loginForm" class="space-y-5" onsubmit="event.preventDefault(); window.app && window.app.handleLogin();">
         <input type="hidden" id="loginRoleInput" value="youth">
 
         <!-- 1. 세대 선택 (청년 vs 어르신) -->
@@ -79,7 +117,7 @@
         </div>
 
         <!-- 입장하기 버튼 -->
-        <button type="submit" class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-amber-600 hover:from-indigo-700 hover:to-amber-700 text-white font-extrabold text-lg shadow-lg transition-transform active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+        <button type="submit" id="submitLoginBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-amber-600 hover:from-indigo-700 hover:to-amber-700 text-white font-extrabold text-lg shadow-lg transition-transform active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
           <span>대화방 입장하기 ➤</span>
         </button>
 
@@ -92,14 +130,13 @@
   <!-- ==================== 2. 메인 대화 화면 ==================== -->
   <div id="chatScreen" class="hidden flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
     
-    <!-- 상단 헤더 (현재 연결된 방 코드 표시) -->
+    <!-- 상단 헤더 -->
     <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between flex-shrink-0 shadow-sm">
       <div class="flex items-center gap-3">
         <span class="text-2xl">🌱</span>
         <div>
           <div class="flex items-center gap-2">
             <h2 class="font-extrabold text-slate-900 text-base md:text-lg leading-tight">다정다감</h2>
-            <!-- 현재 연결된 방 코드 표시 뱃지 -->
             <div id="headerRoomBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-100 border border-amber-300 text-amber-950 text-xs font-black cursor-pointer hover:bg-amber-200 transition-colors shadow-xs" title="클릭하면 방 코드가 복사됩니다">
               <span>🏷️ 코드:</span>
               <span id="displayHeaderRoomCode" class="text-sm font-black tracking-widest text-amber-900">1234</span>
@@ -110,7 +147,7 @@
         </div>
       </div>
 
-      <!-- 상단 도구 (큰글씨 모드 / 방 코드 변경 / 퇴장) -->
+      <!-- 상단 도구 -->
       <div class="flex items-center gap-2">
         <button type="button" id="toggleElderModeBtn" class="px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs">
           🔍 어르신 큰글씨
@@ -124,26 +161,22 @@
       </div>
     </header>
 
-    <!-- 대화 파트너 선택 탭 바 (내 코드 방 / 박민준 청년 AI / 김순자 어르신 AI / 박바우 박사 AI) -->
+    <!-- 대화 파트너 선택 탭 바 -->
     <div class="bg-slate-100/90 border-b border-slate-200 px-3 py-2 flex items-center gap-2 overflow-x-auto flex-shrink-0">
       <span class="text-xs font-bold text-slate-500 whitespace-nowrap pl-1">대화 상대:</span>
       
-      <!-- 1. 코드 1:1 대화방 -->
       <button type="button" class="partner-tab active px-3.5 py-1.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-indigo-600 text-indigo-600 bg-indigo-50/70 shadow-sm cursor-pointer transition-all" data-target="room">
         <span>💬</span> <span id="partnerTabRoomTitle">1:1 연결방 [코드: 1234]</span>
       </button>
 
-      <!-- 2. 박민준 청년 (AI) - 사진 속 페르소나 -->
       <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="minjun">
         <span>🧑‍💻</span> 박민준 청년 (AI)
       </button>
 
-      <!-- 3. 김순자 어르신 (AI) -->
       <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="soonja">
         <span>👵</span> 김순자 어르신 (AI)
       </button>
 
-      <!-- 4. 박바우 박사 (AI) -->
       <button type="button" class="partner-tab px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-sm cursor-pointer transition-all" data-target="dr_bau">
         <span>🤖</span> 박바우 박사 (AI)
       </button>
@@ -153,7 +186,7 @@
     <div class="flex-1 flex overflow-hidden">
       
       <!-- 메인 채팅 패널 -->
-      <main class="flex-1 flex flex-col bg-slate-50/60 overflow-hidden">
+      <main class="flex-1 flex flex-col bg-slate-100/70 overflow-hidden">
         
         <!-- 대화 안내 바 -->
         <div class="px-4 py-2 bg-white/80 border-b border-slate-200 flex items-center justify-between text-xs sm:text-sm flex-shrink-0">
@@ -169,32 +202,27 @@
           </button>
         </div>
 
-        <!-- 메시지 리스트 스크롤 영역 (사진과 같은 카드형 말풍선 렌더링) -->
-        <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
-          <!-- JS에서 동적 주입 -->
-        </div>
+        <!-- 메시지 리스트 스크롤 영역 (카카오톡 형태) -->
+        <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4"></div>
 
         <!-- 마이크 상태 안내 배너 -->
         <div id="micStatusText" class="hidden bg-red-500 text-white text-xs font-semibold px-4 py-2 text-center animate-pulse shadow-md">
           🎤 말씀하시는 소리를 듣고 있어요! 말씀이 끝나면 입력창에 글자로 자동으로 들어갑니다.
         </div>
 
-        <!-- 하단 입력 영역 (마이크 음성 쓰기 + 텍스트 + 전송) -->
+        <!-- 하단 입력 영역 -->
         <div class="p-3 md:p-4 bg-white border-t border-slate-200 flex-shrink-0">
           <form id="chatInputForm" class="flex items-center gap-2">
             
-            <!-- 음성지원: 말로 쓰기 버튼 (STT) -->
             <button type="button" id="micRecordBtn" class="px-4 py-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-200 flex items-center gap-1.5 font-bold text-sm md:text-base flex-shrink-0 transition-all cursor-pointer shadow-sm select-none" title="마이크를 누르고 말씀하시면 자동으로 글자가 입력됩니다">
               <span class="text-xl">🎤</span>
               <span id="micButtonLabel" class="hidden sm:inline">말로 쓰기</span>
             </button>
 
-            <!-- 텍스트 입력란 -->
             <div class="flex-1 relative">
               <input type="text" id="chatTextInput" class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base md:text-lg shadow-inner bg-slate-50 focus:bg-white transition-colors" placeholder="이야기를 입력하세요... (왼쪽 마이크를 누르면 음성으로 쓸 수 있어요!)" autocomplete="off">
             </div>
 
-            <!-- 전송 버튼 -->
             <button type="submit" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base md:text-lg shadow-md transition-all active:scale-95 flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
               <span>보내기</span>
               <span class="text-sm">➤</span>
@@ -205,7 +233,7 @@
 
       </main>
 
-      <!-- 우측: 세대 언어 나눔 사전 사이드바 -->
+      <!-- 우측 사전 사이드바 -->
       <aside class="hidden lg:flex w-80 bg-white border-l border-slate-200 flex-col overflow-hidden">
         <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -215,7 +243,6 @@
           <span class="text-[11px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-300">단어 누르면 풀이</span>
         </div>
 
-        <!-- 단어 검색창 -->
         <div class="p-3 border-b border-slate-200">
           <div class="flex items-center gap-1.5">
             <input type="text" id="dictSearchInput" class="flex-1 px-3 py-1.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="모르는 단어 검색...">
@@ -226,7 +253,6 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
-          
           <div>
             <h4 class="font-bold text-indigo-900 text-xs mb-2 flex items-center gap-1">
               <span>🧑</span> 청년 신조어
@@ -241,16 +267,14 @@
             <div id="popularElderWords" class="flex flex-wrap gap-1.5"></div>
           </div>
 
-          <!-- 사진 속 힌트 가이드 -->
           <div class="bg-amber-50/80 border-2 border-dashed border-amber-400 rounded-2xl p-4 text-xs text-amber-950 space-y-2">
             <p class="font-black text-sm flex items-center gap-1 text-amber-900">
               <span>💡</span> 단어 누르면 뜻이 나와요!
             </p>
             <p class="leading-relaxed">
-              채팅창에서 노란색 점선 박스로 표시된 <strong>중꺾마 🔍</strong>, <strong>럭키비키 🔍</strong> 같은 단어를 누르시면 뜻과 유래, 쉬운 해설 카드가 바로 열립니다.
+              채팅창에서 노란색 점선 박스로 표시된 <strong>중꺾마 🔍</strong>, <strong>럭키비키 🔍</strong> 같은 단어를 누르시면 뜻과 유래, 쉬운 해설 카드가 열립니다.
             </p>
           </div>
-
         </div>
       </aside>
 
@@ -265,7 +289,6 @@
 
     <div class="modal-content-box relative z-10 max-w-lg w-full bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
       
-      <!-- 헤더 -->
       <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-white p-5 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="text-2xl">📖</span>
@@ -279,7 +302,6 @@
         </button>
       </div>
 
-      <!-- 본문 -->
       <div class="p-6 space-y-4 text-slate-800">
         <div>
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">단어의 뜻</span>
@@ -310,7 +332,6 @@
         </div>
       </div>
 
-      <!-- 푸터 -->
       <div class="bg-slate-100 px-6 py-3.5 flex items-center justify-between border-t border-slate-200">
         <button type="button" id="modalSpeakWordBtn" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm">
           <span>🔊</span> 소리로 뜻 듣기
@@ -323,11 +344,521 @@
     </div>
   </div>
 
-  <!-- 스크립트 로드 순서 -->
-  <script src="js/dictionary.js"></script>
-  <script src="js/ai-personas.js"></script>
-  <script src="js/speech.js"></script>
-  <script src="js/chat.js"></script>
-  <script src="js/app.js"></script>
+  <!-- ==================== 완전 내장 스크립트 (파일 누락 방지) ==================== -->
+  <script>
+    // 1. 사전 데이터
+    const GENERATION_DICTIONARY = {
+      youth: [
+        { word: "중꺾마", origin: "청년 신조어", meaning: "'중요한 것은 꺾이지 않는 마음'의 줄임말", easyExplain: "어려운 일이 닥쳐도 포기하지 않고 꿋꿋하게 이겨내려는 굳센 마음을 뜻해요.", example: "요즘은 어려운 일이 있어도 포기하지 말자는 뜻의 '중꺾마'라는 말이 유행이에요!", equivalent: "백절불굴 / 칠전팔기" },
+        { word: "럭키비키", origin: "청년 유행어", meaning: "모든 상황을 초긍정적으로 바라보는 사고방식", easyExplain: "뜻밖의 일이 생겨도 '오히려 잘됐다! 운이 좋다!'라며 긍정적으로 생각하는 밝은 마음이에요.", example: "모든 상황을 긍정적으로 보려는 '럭키비키'라는 말도 많이 써요!", equivalent: "전화위복 / 새옹지마" },
+        { word: "알잘딱깔센", origin: "청년 신조어", meaning: "'알아서 잘 딱 깔끔하고 센스있게'의 줄임말", easyExplain: "눈치 빠르게 스스로 똑똑하고 야무지게 일을 처리하는 모양을 칭찬하는 말이에요.", example: "민준이가 회의 준비를 알잘딱깔센하게 끝내뒀더라고요!", equivalent: "야무지게 / 눈치 빠르게" },
+        { word: "갓생", origin: "청년 유행어", meaning: "신(God) + 인생(生)의 합성어", easyExplain: "게으름 피우지 않고 일찍 일어나 운동이나 공부를 하며 성실하게 사는 삶을 말해요.", example: "새해에는 아침에 일찍 일어나는 갓생 살 거예요.", equivalent: "근면성실한 삶" },
+        { word: "도파민", origin: "청년 신조어", meaning: "너무 흥미진진해서 심장이 두근거리는 상태", easyExplain: "즐거울 때 나오는 호르몬에서 유래해 '너무 재미있다'는 뜻으로 써요.", example: "오늘 드라마가 완전 도파민 터지네!", equivalent: "흥미진진 / 꿀잼" },
+        { word: "폼 미쳤다", origin: "청년 유행어", meaning: "실력이나 상태가 기가 막히게 훌륭함을 극찬하는 말", easyExplain: "솜씨나 맵시가 아주 대단하다고 칭찬할 때 쓰는 표현입니다.", example: "오늘 할머니 된장찌개 폼 미쳤어요!", equivalent: "솜씨가 기가 막히다" }
+      ],
+      elder: [
+        { word: "혜안", origin: "전통 한자어 (慧眼)", meaning: "사물의 본질이나 앞날을 꿰뚫어 보는 슬기로운 안목", easyExplain: "인생의 경험과 지혜가 깊어서 상황을 깊고 넓게 내다보는 통찰력을 뜻해요.", example: "어르신의 혜안 덕분에 위기를 잘 넘겼습니다.", equivalent: "깊은 통찰력" },
+        { word: "시나브로", origin: "순우리말", meaning: "모르는 사이에 조금씩 조금씩", easyExplain: "눈에 띄지 않게 천천히, 하지만 꾸준하게 스며드는 아름다운 순우리말입니다.", example: "시나브로 봄이 다가와 들꽃이 피었네.", equivalent: "서서히 / 조금씩" },
+        { word: "개치네네", origin: "순우리말", meaning: "재채기 후 감기가 들지 않도록 빌어주는 감탄사", easyExplain: "재채기한 사람이 감기 앓지 말고 건강하길 바라는 따뜻한 옛말이에요 (Bless you).", example: "에이취! 어이쿠 개치네네, 감기 조심하거라.", equivalent: "감기 걸리지 마 (덕담)" }
+      ]
+    };
+
+    const ALL_WORDS = [
+      ...GENERATION_DICTIONARY.youth.map(i => ({ ...i, type: 'youth' })),
+      ...GENERATION_DICTIONARY.elder.map(i => ({ ...i, type: 'elder' }))
+    ];
+
+    function highlightWords(text) {
+      if (!text) return '';
+      let processed = text;
+      const sorted = [...ALL_WORDS].sort((a, b) => b.word.length - a.word.length);
+      sorted.forEach(item => {
+        const regex = new RegExp(`(${item.word.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')})`, 'gi');
+        processed = processed.replace(regex, `<button type="button" class="dict-word-btn inline-flex items-center px-2 py-0.5 mx-1 rounded-xl bg-[#fff7e6] hover:bg-[#ffeed0] border-2 border-dashed border-[#e6a23c] text-[#8c4b00] font-extrabold text-base md:text-lg cursor-pointer transition-transform hover:scale-105 shadow-xs align-middle" data-word="${item.word}" title="클릭하면 뜻이 나옵니다"><span>$1</span><span class="text-sm ml-1 opacity-80">🔍</span></button>`);
+      });
+      return processed;
+    }
+
+    function findWordInfo(word) {
+      const q = (word || '').trim().toLowerCase();
+      let match = ALL_WORDS.find(w => w.word.toLowerCase() === q);
+      if (match) return match;
+      match = ALL_WORDS.find(w => q.includes(w.word.toLowerCase()) || w.word.toLowerCase().includes(q));
+      if (match) return match;
+      return { word: word, origin: "세대 표현", meaning: `"${word}"에 대한 맞춤형 세대 해석입니다.`, easyExplain: "대화 속에서 쓰인 표현이에요. 상대방에게 직접 뜻을 물어보셔도 친절하게 알려드립니다!", example: `상대방에게: "${word}이(가) 무슨 뜻인가요?"`, equivalent: "문맥에 따른 쉬운 설명" };
+    }
+
+    // 2. AI 페르소나
+    const AI_PERSONAS = {
+      minjun: {
+        id: "minjun", name: "박민준 청년 (AI)", roleType: "youth", avatar: "🧑‍💻",
+        greeting: "요즘은 어려운 일이 있어도 포기하지 말자는 뜻의 '중꺾마'나, 모든 상황을 긍정적으로 보려는 '럭키비키'라는 말이 유행이에요! 예의 바르면서도 통통 튀는 말들이 참 많은데, 어르신께서 젊으셨을 때 친구분들 사이에서 유행했던 말은 무엇이었나요?",
+        reply: "어르신 말씀에 정말 공감해요! 세대가 달라도 서로 아끼고 배려하는 마음은 똑같은 것 같아요. 어르신과 대화 나누며 오늘 많은 걸 배우고 힐링하고 있습니다! 😊"
+      },
+      soonja: {
+        id: "soonja", name: "김순자 어르신 (AI)", roleType: "elder", avatar: "👵",
+        greeting: "아이구 어서 오너라! 오늘 하루도 고생 많았지? 밥은 든든히 챙겨 먹고 다니는 게야? 마주 앉아서 편하게 이야기 나누자꾸나.",
+        reply: "그 이야기 듣고 있으니 참 마음이 포근해지는구나. 인생 살다 보면 비바람 칠 때도 있지만, 그 비가 지나가야 땅이 단단해지는 법이란다. 기운 내렴!"
+      },
+      dr_bau: {
+        id: "dr_bau", name: "박바우 박사 (AI)", roleType: "mediator", avatar: "🤖",
+        greeting: "반갑습니다! 저는 세대 간의 언어와 마음을 이어주는 '박바우 박사'입니다! 대화 중 궁금한 신조어나 표현이 있다면 언제든 저를 찾아주세요!",
+        reply: "멋진 대화입니다! 상대방의 이야기 속에 담긴 온기를 헤아려보면, 세대의 차이는 금세 따뜻한 공감으로 바뀐답니다."
+      }
+    };
+
+    // 3. 음성 지원
+    class SpeechHelper {
+      constructor() {
+        this.synth = window.speechSynthesis;
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.rec = SR ? new SR() : null;
+        if (this.rec) {
+          this.rec.lang = 'ko-KR';
+          this.rec.onresult = (e) => {
+            const txt = e.results[0][0].transcript;
+            const input = document.getElementById('chatTextInput');
+            if (input) input.value = txt;
+          };
+          this.rec.onend = () => {
+            const micBtn = document.getElementById('micRecordBtn');
+            const status = document.getElementById('micStatusText');
+            if (micBtn) micBtn.classList.remove('mic-active', 'bg-red-500', 'text-white');
+            if (status) status.classList.add('hidden');
+          };
+        }
+      }
+      toggleMic() {
+        if (!this.rec) { alert("이 브라우저는 음성 인식을 지원하지 않습니다. 크롬이나 엣지를 이용해주세요!"); return; }
+        const micBtn = document.getElementById('micRecordBtn');
+        const status = document.getElementById('micStatusText');
+        try {
+          this.rec.start();
+          if (micBtn) micBtn.classList.add('mic-active', 'bg-red-500', 'text-white');
+          if (status) status.classList.remove('hidden');
+        } catch (e) {
+          try { this.rec.stop(); } catch(err){}
+        }
+      }
+      speak(text) {
+        if (!this.synth || !text) return;
+        this.synth.cancel();
+        const clean = text.replace(/<[^>]*>/g, '').replace(/[#*_~`]/g, '');
+        const u = new SpeechSynthesisUtterance(clean);
+        u.lang = 'ko-KR';
+        this.synth.speak(u);
+      }
+    }
+
+    // 4. 메인 앱
+    class AppController {
+      constructor() {
+        this.speech = new SpeechHelper();
+        this.currentUser = { id: 'u_' + Date.now(), name: '열정 청년', role: 'youth', avatar: '🧑' };
+        this.currentRoom = '1234';
+        this.currentTarget = 'room';
+        this.messages = [];
+        this.elderMode = false;
+        this.bc = null;
+
+        this.init();
+      }
+
+      init() {
+        this.bindEvents();
+        this.setupPopularChips();
+      }
+
+      bindEvents() {
+        document.getElementById('selectYouthBtn').onclick = () => this.setRole('youth');
+        document.getElementById('selectElderBtn').onclick = () => this.setRole('elder');
+
+        document.getElementById('generateRandomCodeBtn').onclick = () => {
+          const r = Math.floor(1000 + Math.random() * 9000).toString();
+          document.getElementById('inputRoomCode').value = r;
+        };
+
+        document.getElementById('toggleElderModeBtn').onclick = () => this.toggleElder();
+        document.getElementById('logoutBtn').onclick = () => this.logout();
+        document.getElementById('changeRoomBtn').onclick = () => this.changeRoom();
+
+        document.getElementById('micRecordBtn').onclick = () => this.speech.toggleMic();
+
+        document.getElementById('chatInputForm').onsubmit = (e) => {
+          e.preventDefault();
+          const inp = document.getElementById('chatTextInput');
+          if (inp && inp.value.trim()) {
+            this.sendMsg(inp.value.trim());
+            inp.value = '';
+          }
+        };
+
+        // 대화 상대 탭
+        document.querySelectorAll('.partner-tab').forEach(tab => {
+          tab.onclick = () => {
+            document.querySelectorAll('.partner-tab').forEach(t => t.classList.remove('active', 'border-indigo-600', 'text-indigo-600', 'bg-indigo-50/70'));
+            tab.classList.add('active', 'border-indigo-600', 'text-indigo-600', 'bg-indigo-50/70');
+            this.currentTarget = tab.getAttribute('data-target');
+            this.updateHeader();
+            this.loadRoom();
+          };
+        });
+
+        // 모달 닫기
+        document.getElementById('closeWordModalBtn').onclick = () => document.getElementById('wordDetailModal').classList.add('hidden');
+        document.getElementById('wordModalBackdrop').onclick = () => document.getElementById('wordDetailModal').classList.add('hidden');
+
+        // 단어 검색
+        const doSearch = () => {
+          const inp = document.getElementById('dictSearchInput');
+          if (inp && inp.value.trim()) {
+            this.openModal(inp.value.trim());
+            inp.value = '';
+          }
+        };
+        document.getElementById('dictSearchBtn').onclick = doSearch;
+        document.getElementById('dictSearchInput').onkeydown = (e) => { if (e.key === 'Enter') doSearch(); };
+
+        document.getElementById('clearChatBtn').onclick = () => {
+          if (confirm("대화 내용을 모두 지우시겠습니까?")) {
+            this.messages = [];
+            this.saveMsgs();
+            this.render();
+          }
+        };
+
+        document.getElementById('headerRoomBadge').onclick = () => {
+          navigator.clipboard.writeText(this.currentRoom).then(() => {
+            alert(`방 코드 [${this.currentRoom}]가 복사되었습니다! 상대방에게 알려주세요.`);
+          }).catch(() => {
+            prompt("방 코드를 복사하세요:", this.currentRoom);
+          });
+        };
+      }
+
+      setRole(role) {
+        document.getElementById('loginRoleInput').value = role;
+        const yBtn = document.getElementById('selectYouthBtn');
+        const eBtn = document.getElementById('selectElderBtn');
+        const nameInp = document.getElementById('loginNickname');
+
+        if (role === 'youth') {
+          yBtn.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-indigo-600 bg-indigo-50 ring-2 ring-indigo-500 transition-all text-center cursor-pointer hover:shadow-sm";
+          eBtn.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white transition-all text-center cursor-pointer hover:shadow-sm";
+          if (!nameInp.value || nameInp.value.includes('어르신')) nameInp.value = '열정 청년';
+        } else {
+          eBtn.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-amber-600 bg-amber-50 ring-2 ring-amber-500 transition-all text-center cursor-pointer hover:shadow-sm";
+          yBtn.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white transition-all text-center cursor-pointer hover:shadow-sm";
+          if (!nameInp.value || nameInp.value.includes('청년')) nameInp.value = '지혜로운 어르신';
+        }
+      }
+
+      handleLogin() {
+        try {
+          const role = document.getElementById('loginRoleInput').value || 'youth';
+          const name = document.getElementById('loginNickname').value.trim() || (role === 'youth' ? '열정 청년' : '인자한 어르신');
+          const code = (document.getElementById('inputRoomCode').value.trim() || '1234').toUpperCase();
+
+          this.currentUser = {
+            id: 'u_' + Date.now(),
+            name: name,
+            role: role,
+            avatar: role === 'youth' ? '🧑' : '👵'
+          };
+          this.currentRoom = code;
+
+          if (role === 'elder') {
+            this.elderMode = true;
+            document.body.classList.add('elder-mode-active');
+          }
+
+          // 화면 전환
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('chatScreen').classList.remove('hidden');
+
+          // 상단 배지 업데이트
+          const b = document.getElementById('currentUserBadge');
+          if (b) {
+            b.innerHTML = `<span class="text-base">${this.currentUser.avatar}</span><span class="font-bold text-slate-800">${this.currentUser.name}</span><span class="text-[10px] px-2 py-0.5 rounded-full ${role==='elder'?'bg-amber-100 text-amber-900 border border-amber-300':'bg-indigo-100 text-indigo-900 border border-indigo-300'} font-bold">${role==='elder'?'어르신':'청년'}</span>`;
+          }
+
+          document.getElementById('displayHeaderRoomCode').textContent = this.currentRoom;
+          document.getElementById('partnerTabRoomTitle').textContent = `1:1 연결방 [코드: ${this.currentRoom}]`;
+
+          this.initBC();
+          this.loadRoom();
+        } catch (err) {
+          console.error("로그인 에러:", err);
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('chatScreen').classList.remove('hidden');
+        }
+      }
+
+      initBC() {
+        if (this.bc) { try { this.bc.close(); } catch(e){} }
+        try {
+          this.bc = new BroadcastChannel('gen_channel_' + this.currentRoom);
+          this.bc.onmessage = (e) => {
+            if (e.data && e.data.room === this.currentRoom && this.currentTarget === 'room') {
+              this.messages.push(e.data.msg);
+              this.render();
+            }
+          };
+        } catch (e){}
+      }
+
+      loadRoom() {
+        const key = this.currentTarget === 'room' ? ('msgs_' + this.currentRoom) : ('msgs_ai_' + this.currentTarget);
+        try {
+          const saved = localStorage.getItem(key);
+          if (saved) {
+            this.messages = JSON.parse(saved);
+          } else {
+            this.messages = [];
+            this.addWelcome();
+          }
+        } catch (e) {
+          this.messages = [];
+          this.addWelcome();
+        }
+        this.render();
+      }
+
+      saveMsgs() {
+        const key = this.currentTarget === 'room' ? ('msgs_' + this.currentRoom) : ('msgs_ai_' + this.currentTarget);
+        try { localStorage.setItem(key, JSON.stringify(this.messages)); } catch (e) {}
+      }
+
+      addWelcome() {
+        if (this.currentTarget === 'room') {
+          this.messages.push({
+            id: 'sys_' + Date.now(), sender: 'system', senderName: '안내',
+            text: `대화방(코드: ${this.currentRoom})에 입장하셨습니다. 상대방에게도 방 코드 [${this.currentRoom}]를 알려주세요. 코드가 일치하는 사람끼리 실시간으로 대화가 연결됩니다!`
+          });
+        } else if (AI_PERSONAS[this.currentTarget]) {
+          const p = AI_PERSONAS[this.currentTarget];
+          this.messages.push({
+            id: 'ai_' + Date.now(), sender: p.id, senderName: p.name, senderRole: p.roleType,
+            text: p.greeting, time: this.getTime()
+          });
+        }
+      }
+
+      updateHeader() {
+        const a = document.getElementById('chatPartnerAvatar');
+        const n = document.getElementById('chatPartnerName');
+        const d = document.getElementById('chatPartnerDesc');
+        if (this.currentTarget === 'room') {
+          a.textContent = '🏷️';
+          n.textContent = `1:1 연결 대화방 [코드: ${this.currentRoom}]`;
+          d.textContent = '• 같은 코드를 입력한 상대방끼리만 실시간으로 연결됩니다.';
+        } else if (AI_PERSONAS[this.currentTarget]) {
+          const p = AI_PERSONAS[this.currentTarget];
+          a.textContent = p.avatar;
+          n.textContent = p.name;
+          d.textContent = '• AI 친구와 편안하게 세대 이야기를 나눠보세요.';
+        }
+      }
+
+      sendMsg(text) {
+        const roleLabel = this.currentUser.role === 'youth' ? '청년' : '어르신';
+        const msg = {
+          id: 'm_' + Date.now(),
+          sender: this.currentUser.id,
+          senderName: `${this.currentUser.name} (${roleLabel})`,
+          senderRole: this.currentUser.role,
+          text: text,
+          time: this.getTime()
+        };
+
+        this.messages.push(msg);
+        this.saveMsgs();
+        this.render();
+
+        if (this.currentTarget === 'room' && this.bc) {
+          this.bc.postMessage({ room: this.currentRoom, msg: msg });
+        }
+
+        if (this.currentTarget !== 'room' && AI_PERSONAS[this.currentTarget]) {
+          const p = AI_PERSONAS[this.currentTarget];
+          setTimeout(() => {
+            this.messages.push({
+              id: 'ai_' + Date.now(),
+              sender: p.id,
+              senderName: p.name,
+              senderRole: p.roleType,
+              text: p.reply,
+              time: this.getTime()
+            });
+            this.saveMsgs();
+            this.render();
+          }, 1000);
+        }
+      }
+
+      render() {
+        const c = document.getElementById('chatMessagesContainer');
+        if (!c) return;
+        c.innerHTML = '';
+        const myId = this.currentUser.id;
+
+        this.messages.forEach(msg => {
+          if (msg.sender === 'system') {
+            const d = document.createElement('div');
+            d.className = 'flex justify-center my-4';
+            d.innerHTML = `<div class="bg-amber-50 text-amber-900 border border-amber-200 rounded-2xl px-5 py-3 max-w-xl text-center text-sm shadow-xs leading-relaxed font-medium">📢 ${msg.text}</div>`;
+            c.appendChild(d);
+            return;
+          }
+
+          const isMe = msg.sender === myId;
+          const hText = highlightWords(msg.text);
+          const box = document.createElement('div');
+
+          if (isMe) {
+            // 내가 보낸 메시지 (카카오톡 우측 정렬)
+            box.className = 'flex justify-end mb-5';
+            box.innerHTML = `
+              <div class="flex items-end gap-2 max-w-[85%] md:max-w-[70%]">
+                <div class="text-[11px] text-slate-400 whitespace-nowrap mb-1">${msg.time || ''}</div>
+                <div class="bg-[#fee500] border border-[#f2d800] text-slate-900 rounded-3xl rounded-tr-none p-4 md:p-5 shadow-xs">
+                  <div class="text-base md:text-lg font-medium leading-relaxed">${hText}</div>
+                  <div class="flex items-center justify-end mt-2 pt-1.5 border-t border-amber-300/40 text-xs">
+                    <button type="button" class="spk-btn px-2.5 py-1 rounded-xl text-amber-950 hover:bg-amber-400/40 font-bold flex items-center gap-1 cursor-pointer">
+                      <span>📢</span><span>읽어주기</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            // 상대방 / AI 메시지 (사진 속 완벽한 레이아웃)
+            box.className = 'flex justify-start mb-5';
+            box.innerHTML = `
+              <div class="max-w-[90%] md:max-w-[75%]">
+                <div class="text-xs md:text-sm font-bold text-slate-500 mb-1.5 pl-1">${msg.senderName}</div>
+                <div class="flex items-end gap-2">
+                  <div class="bg-white border border-slate-200 rounded-3xl rounded-tl-none p-5 md:p-6 shadow-sm flex-1">
+                    <div class="text-slate-800 text-lg md:text-xl font-normal leading-relaxed md:leading-loose">${hText}</div>
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs md:text-sm">
+                      <button type="button" class="trans-btn px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100 text-amber-900 font-bold flex items-center gap-1 cursor-pointer shadow-xs">
+                        <span>✨ AI 문장 맥락 통역</span>
+                      </button>
+                      <button type="button" class="spk-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-indigo-700 hover:bg-slate-100 font-semibold flex items-center gap-1.5 cursor-pointer">
+                        <span class="text-base">📢</span><span>읽어주기</span>
+                      </button>
+                    </div>
+                    <div class="trans-box hidden mt-3 p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 text-sm text-indigo-900 font-medium"></div>
+                  </div>
+                  <div class="text-[11px] text-slate-400 whitespace-nowrap mb-1">${msg.time || ''}</div>
+                </div>
+              </div>
+            `;
+          }
+
+          // 이벤트 연결
+          box.querySelectorAll('.dict-word-btn').forEach(b => {
+            b.onclick = (e) => { e.stopPropagation(); this.openModal(b.getAttribute('data-word')); };
+          });
+
+          box.querySelectorAll('.spk-btn').forEach(b => {
+            b.onclick = () => this.speech.speak(msg.text);
+          });
+
+          box.querySelectorAll('.trans-btn').forEach(b => {
+            b.onclick = () => {
+              const tb = box.querySelector('.trans-box');
+              if (!tb) return;
+              if (!tb.classList.contains('hidden')) { tb.classList.add('hidden'); return; }
+              tb.innerHTML = `<strong>✨ AI 세대 맞춤 통역:</strong><br>"${msg.text}"<br><span class="text-xs text-indigo-600 block mt-1">💡 상대방의 마음에 닿을 수 있도록 따뜻한 세대 언어로 쉽게 풀어낸 뜻입니다.</span>`;
+              tb.classList.remove('hidden');
+            };
+          });
+
+          c.appendChild(box);
+        });
+
+        c.scrollTop = c.scrollHeight;
+      }
+
+      openModal(word) {
+        const info = findWordInfo(word);
+        document.getElementById('modalWordTitle').textContent = info.word;
+        document.getElementById('modalWordOrigin').textContent = info.origin;
+        document.getElementById('modalWordMeaning').textContent = info.meaning;
+        document.getElementById('modalWordEasyExplain').textContent = info.easyExplain;
+        document.getElementById('modalWordExample').textContent = info.example;
+        document.getElementById('modalWordEquivalent').textContent = info.equivalent;
+
+        document.getElementById('modalSpeakWordBtn').onclick = () => {
+          this.speech.speak(`${info.word}. 뜻은, ${info.easyExplain}`);
+        };
+
+        document.getElementById('wordDetailModal').classList.remove('hidden');
+      }
+
+      setupPopularChips() {
+        const y = document.getElementById('popularYouthWords');
+        const e = document.getElementById('popularElderWords');
+        if (y) {
+          y.innerHTML = '';
+          GENERATION_DICTIONARY.youth.forEach(w => {
+            const b = document.createElement('button');
+            b.className = 'text-xs px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 cursor-pointer font-medium';
+            b.textContent = '#' + w.word;
+            b.onclick = () => this.openModal(w.word);
+            y.appendChild(b);
+          });
+        }
+        if (e) {
+          e.innerHTML = '';
+          GENERATION_DICTIONARY.elder.forEach(w => {
+            const b = document.createElement('button');
+            b.className = 'text-xs px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 cursor-pointer font-medium';
+            b.textContent = '#' + w.word;
+            b.onclick = () => this.openModal(w.word);
+            e.appendChild(b);
+          });
+        }
+      }
+
+      toggleElder() {
+        this.elderMode = !this.elderMode;
+        if (this.elderMode) document.body.classList.add('elder-mode-active');
+        else document.body.classList.remove('elder-mode-active');
+        document.getElementById('toggleElderModeBtn').textContent = this.elderMode ? '👓 보통 글씨' : '🔍 어르신 큰글씨';
+      }
+
+      changeRoom() {
+        const code = prompt("참여할 대화방 코드를 입력하세요:", this.currentRoom);
+        if (code && code.trim()) {
+          this.currentRoom = code.trim().toUpperCase();
+          document.getElementById('displayHeaderRoomCode').textContent = this.currentRoom;
+          document.getElementById('partnerTabRoomTitle').textContent = `1:1 연결방 [코드: ${this.currentRoom}]`;
+          this.initBC();
+          this.loadRoom();
+        }
+      }
+
+      logout() {
+        if (confirm("대화방에서 나가시겠습니까?")) {
+          document.getElementById('chatScreen').classList.add('hidden');
+          document.getElementById('loginScreen').classList.remove('hidden');
+        }
+      }
+
+      getTime() {
+        const d = new Date();
+        const h = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
+        const m = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes();
+        return `${h}:${m}`;
+      }
+    }
+
+    // 로드 즉시 기동
+    window.addEventListener('DOMContentLoaded', () => {
+      window.app = new AppController();
+    });
+  </script>
 </body>
 </html>
