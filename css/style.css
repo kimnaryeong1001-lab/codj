@@ -1,0 +1,125 @@
+/* 세대 공감 대화 플랫폼 전용 스타일 시트 */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --font-family-base: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 어르신 맞춤 큰 글씨 / 고대비 모드 */
+body.elder-mode-active {
+  font-size: 1.15rem;
+  line-height: 1.75;
+}
+
+body.elder-mode-active .chat-bubble {
+  font-size: 1.25rem !important;
+  line-height: 1.8 !important;
+  padding: 1.1rem 1.4rem !important;
+}
+
+body.elder-mode-active button,
+body.elder-mode-active input,
+body.elder-mode-active select {
+  font-size: 1.15rem !important;
+}
+
+/* 말풍선 공통 스타일 */
+.chat-bubble {
+  position: relative;
+  word-break: break-word;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 마이크 파동 애니메이션 */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 16px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.mic-active {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 말하는 중 스피커 파동 */
+@keyframes speaker-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.speaking-indicator {
+  display: inline-block;
+  animation: speaker-glow 1s infinite;
+}
+
+/* 단어 버튼 스타일 */
+.dict-word-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.dict-word-btn:hover {
+  filter: brightness(0.92);
+}
+
+/* 스크롤바 세련되게 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 팝업 모달 등장 트랜지션 */
+.modal-enter {
+  animation: modalFadeIn 0.25s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
