@@ -94,7 +94,7 @@
         </div>
 
         <!-- 2. 대화방 코드 입력칸 (코드가 맞는 사람끼리 매칭!) -->
-        <div class="bg-amber-50/90 border-2 border-amber-300 rounded-2xl p-4 sm:p-5 space-y-2.5 shadow-xs">
+        <div class="bg-amber-50/90 border-2 border-amber-300 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs">
           <label for="inputRoomCode" class="block text-amber-950 font-black text-base flex items-center gap-1.5">
             <span>🏷️</span> 대화방 코드 입력 (필수)
           </label>
@@ -103,11 +103,14 @@
             상대방과 맞춘 코드를 입력하시거나 새 코드를 만들어 알려주세요!
           </p>
 
-          <div class="flex items-center gap-2 pt-1">
-            <input type="text" id="inputRoomCode" class="flex-1 h-14 px-3 text-center tracking-widest text-2xl font-black uppercase rounded-xl border-2 border-amber-400 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner" placeholder="예: 1234" maxlength="12" value="1234" required>
-            <button type="button" id="generateRandomCodeBtn" class="h-14 px-4 rounded-xl bg-amber-200 hover:bg-amber-300 active:bg-amber-400 text-amber-950 font-bold text-sm whitespace-nowrap transition-all cursor-pointer border border-amber-300 flex items-center justify-center gap-1.5 shadow-xs" title="새로운 임의의 4자리 방 번호를 만듭니다">
+          <div class="space-y-2">
+            <!-- 화면 밖으로 절대 튀어나오지 않는 꽉 찬 입력창 -->
+            <input type="text" id="inputRoomCode" class="w-full h-14 px-4 text-center tracking-widest text-2xl font-black uppercase rounded-2xl border-2 border-amber-400 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-inner block" placeholder="예: 1234" maxlength="12" value="1234" required>
+            
+            <!-- 아래로 깔끔하게 정렬된 새 코드 생성 버튼 -->
+            <button type="button" id="generateRandomCodeBtn" class="w-full py-2.5 rounded-xl bg-amber-200 hover:bg-amber-300 active:bg-amber-400 text-amber-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 border border-amber-300 shadow-2xs transition-all cursor-pointer" title="새로운 임의의 4자리 방 번호를 만듭니다">
               <span>🎲</span>
-              <span>새 코드 생성</span>
+              <span>새로운 랜덤 방 코드 생성하기</span>
             </button>
           </div>
         </div>
